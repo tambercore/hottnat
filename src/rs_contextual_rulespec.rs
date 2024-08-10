@@ -2,6 +2,8 @@ use std::fmt;
 use crate::rs_rulespec_id::RulespecID;
 use crate::rs_wordclass::Wordclass;
 
+
+
 pub fn previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     match sentence.get((current_index - 1) as usize) {
         Some((_, ref _tag)) if _tag == &tag => true,
@@ -9,12 +11,16 @@ pub fn previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: W
     }
 }
 
+
+
 pub fn previous_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str) -> bool {
     match sentence.get((current_index - 1) as usize) {
         Some((_word, _)) if _word == &word => true,
         _ => false,
     }
 }
+
+
 
 pub fn build_contextual_rule(rule: ContextualRulespec) {
     match rule.ruleset_id {
@@ -44,12 +50,16 @@ pub fn build_contextual_rule(rule: ContextualRulespec) {
     
 }
 
+
+
 pub struct ContextualRulespec {
     pub source_tag: Wordclass,
     pub target_tag: Wordclass,
     pub ruleset_id: RulespecID,
     pub parameters: Vec<String>,
 }
+
+
 
 impl fmt::Display for ContextualRulespec {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
