@@ -78,7 +78,7 @@ fn main() -> io::Result<()> {
                         None => {}
                         Some(_) => {for v in values {
                             for v2 in v {
-                                print!("\t{}, \n", v2);
+                                println!("\t{}, ", v2);
                             }
                         }}
                     }

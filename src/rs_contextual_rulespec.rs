@@ -16,7 +16,7 @@ pub fn previous_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word:
     }
 }
 
-pub fn build_contextual_rule(rule: ContextualRulespec) -> () {
+pub fn build_contextual_rule(rule: ContextualRulespec) {
     match rule.ruleset_id {
         RulespecID::PREVTAG => {}
         RulespecID::PREVWD => {}
@@ -41,7 +41,7 @@ pub fn build_contextual_rule(rule: ContextualRulespec) -> () {
         RulespecID::NEXT2TAG => {}
         RulespecID::LBIGRAM => {}
     }
-    return ()
+    
 }
 
 pub struct ContextualRulespec {

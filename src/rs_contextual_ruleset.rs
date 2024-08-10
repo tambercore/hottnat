@@ -32,7 +32,7 @@ pub fn parse_contextual_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<Con
         };
 
         // Append the rule specification into the vector mapping of the source tag, meaning this rule applies to the source tag.
-        result.entry(source_tag).or_insert_with(Vec::new).push(new_rulespec);
+        result.entry(source_tag).or_default().push(new_rulespec);
     }
     Ok(result)
 }
