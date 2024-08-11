@@ -27,6 +27,8 @@ pub enum RulespecID {
     LBIGRAM,
 }
 
+
+
 /// Implementation to display RulespecIDs in CLI.
 impl fmt::Display for RulespecID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -57,6 +59,8 @@ impl fmt::Display for RulespecID {
         write!(f, "{}", name)
     }
 }
+
+
 
 pub fn map_rulespec_id(string: &str) -> Result<RulespecID, Error> {
     match string {

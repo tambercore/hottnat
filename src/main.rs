@@ -2,7 +2,6 @@ mod rs_wordclass;
 mod rs_contextual_ruleset;
 mod rs_rulespec_id;
 mod rs_contextual_rulespec;
-
 use std::collections::HashMap;
 use std::fs;
 use std::io::{self, Error, Write};
@@ -10,7 +9,11 @@ use rs_wordclass::*;
 use rs_contextual_rulespec::*;
 use rs_contextual_ruleset::*;
 
+
+
 type WordclassMap = HashMap<String, Vec<Wordclass>>;
+
+
 
 /// ...
 fn initialize_tagger(path: &str) -> Result<WordclassMap, io::Error>
@@ -44,17 +47,16 @@ fn initialize_tagger(path: &str) -> Result<WordclassMap, io::Error>
 }
 
 
+
 fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
     let wordclass_str: Vec<String> = wordclasses.iter().map(|wc| wc.to_string()).collect();
     wordclass_str.join(", ")
 }
 
 
+
 fn main() -> io::Result<()> {
-
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
-
-
     let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
 
     loop {
@@ -82,7 +84,6 @@ fn main() -> io::Result<()> {
                             }
                         }}
                     }
-
                 }
             }
             None => {
