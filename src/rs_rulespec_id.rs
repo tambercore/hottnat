@@ -2,6 +2,7 @@ use std::fmt;
 use std::io::{Error, ErrorKind};
 
 /// RulespecID Enumeration
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum RulespecID {
     PREVTAG,
     PREVWD,

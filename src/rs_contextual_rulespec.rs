@@ -1,12 +1,11 @@
 use std::fmt;
-use std::io::Error;
 use crate::rs_rulespec_id::RulespecID;
 use crate::rs_wordclass::{map_pos_tag, Wordclass};
 
 
 /// Function to check if the tag at index - 1 is equal to `tag` in a sentence.
 pub fn previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
-    match sentence.get((current_index as usize - 1) as usize) {
+    match sentence.get((current_index - 1) as usize) {
         Some((_, ref _tag)) if _tag == &tag => true,
         _ => false,
     }
@@ -15,7 +14,7 @@ pub fn previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: W
 
 /// Function to check if the tag at index - 1 is equal to `tag` in a sentence.
 pub fn next_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
-    match sentence.get((current_index as usize + 1) as usize) {
+    match sentence.get((current_index + 1) as usize) {
         Some((_, ref _tag)) if _tag == &tag => true,
         _ => false,
     }
@@ -24,7 +23,7 @@ pub fn next_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordc
 
 /// Function to check if the word at index - 1 is equal to `word` in a sentence.
 pub fn previous_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str) -> bool {
-    match sentence.get((current_index as usize - 1) as usize) {
+    match sentence.get((current_index - 1) as usize) {
         Some((_word, _)) if _word == &word => true,
         _ => false,
     }
@@ -34,7 +33,7 @@ pub fn previous_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word:
 /// Function to check if the tag at index +1 or index +2 is equal to `tag` in a sentence.
 pub fn next_one_or_two_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     (1..=2).any(|offset| {
-        sentence.get((current_index as usize + offset) as usize).map_or(false, |&(_, ref _tag)| _tag == &tag)
+        sentence.get((current_index + offset) as usize).map_or(false, |&(_, ref _tag)| _tag == &tag)
     })
 }
 
@@ -72,7 +71,7 @@ pub fn word_and_tag_2_after(sentence: Vec<(&str, Wordclass)>, current_index: i32
 /// Function to check current word, and word 2 words after.
 pub fn word_and_2_after(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_one: &str, word_two: &str) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word_one) {
-        sentence.get(current_index as usize as usize + 2).map_or(false, |(w2, _)| w2 == &word_two)
+        sentence.get((current_index + 2) as usize).map_or(false, |(w2, _)| w2 == &word_two)
     } else { false }
 }
 
@@ -111,11 +110,10 @@ pub fn word_and_next_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, w
 }
 
 
-
 /// Function to check the surrounding tags of a word.
 pub fn surrounding_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, previous_tag: Wordclass, next_tag: Wordclass) -> bool {
-    match sentence.get((current_index as usize - 1) as usize) {
-        Some((_, ref _tag)) if _tag == &previous_tag => match sentence.get((current_index as usize + 1) as usize) {
+    match sentence.get((current_index  - 1) as usize) {
+        Some((_, ref _tag)) if _tag == &previous_tag => match sentence.get((current_index + 1) as usize) {
             Some((_, ref _tag)) if _tag == &next_tag => true,
             _ => false,
         },
@@ -124,14 +122,12 @@ pub fn surrounding_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, pr
 }
 
 
-
 /// Function to check current word and tag of hte next word.
 pub fn word_and_two_tag_before(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str, tag: Wordclass) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word) {
         sentence.get(current_index as usize - 2).map_or(false, |(_, _tag)| _tag == &tag)
     } else { false }
 }
-
 
 
 
@@ -152,10 +148,9 @@ pub fn left_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_on
 }
 
 
-
 /// Function to check previous bigram tags
 pub fn prev_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, class_one: Wordclass, class_two: Wordclass) -> bool {
-    if sentence.get((current_index - 1) as usize).map_or(false, |(_, tag1)| tag1 == &class_two) {
+    if sentence.get((current_index - 1) as usize).map_or(false, |(_, tag1)| tag1 == &class_one) {
         sentence.get((current_index - 2) as usize ).map_or(false, |(_, tag2)| tag2 == &class_two)
     } else { false }
 }
@@ -164,7 +159,7 @@ pub fn prev_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, class_o
 
 /// Function to check the next bigram tags
 pub fn next_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, class_one: Wordclass, class_two: Wordclass) -> bool {
-    if sentence.get(current_index as usize + 1).map_or(false, |(_, tag1)| tag1 == &class_two) {
+    if sentence.get(current_index as usize + 1).map_or(false, |(_, tag1)| tag1 == &class_one) {
         sentence.get(current_index as usize + 2).map_or(false, |(_, tag2)| tag2 == &class_two)
     } else { false }
 }
@@ -189,10 +184,9 @@ pub fn word_and_previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i3
 
 
 /// Function to check word and previous tag
-pub fn next_two_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag1: Wordclass, tag2: Wordclass) -> bool {
-    if sentence.get(current_index as usize).map_or(false, |(_, _tag1)| _tag1 == &tag1) {
-        sentence.get(current_index as usize - 1).map_or(false, |(_, _tag2)| _tag2 == &tag2)
-    } else { false }
+pub fn next_two_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag1: Wordclass) -> bool {
+    if sentence.get((current_index + 2) as usize).map_or(false, |(_, _tag1)| _tag1 == &tag1) { true }
+    else { false }
 }
 
 
@@ -310,7 +304,7 @@ pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i3
             let type_parameter1 = rule.parameters.get(0)?;
             let type_parameter2 = rule.parameters.get(1)?;
             let type_wordclass1 = map_pos_tag(type_parameter1);
-            let type_wordclass2 = map_pos_tag(type_parameter1);
+            let type_wordclass2 = map_pos_tag(type_parameter2);
             match (type_wordclass1, type_wordclass2) {
                 (Ok(wordclass1), Ok(wordclass2)) => Option::from(surrounding_tags(sentence, current_index, wordclass1, wordclass2)),
                 _ => Option::from(false),
@@ -338,7 +332,7 @@ pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i3
             let type_parameter1 = rule.parameters.get(0)?;
             let type_parameter2 = rule.parameters.get(1)?;
             let type_wordclass1 = map_pos_tag(type_parameter1);
-            let type_wordclass2 = map_pos_tag(type_parameter1);
+            let type_wordclass2 = map_pos_tag(type_parameter2);
             match (type_wordclass1, type_wordclass2) {
                 (Ok(wordclass1), Ok(wordclass2)) => Option::from(prev_bigram(sentence, current_index, wordclass1, wordclass2)),
                 _ => Option::from(false),
@@ -364,7 +358,7 @@ pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i3
             let type_parameter1 = rule.parameters.get(0)?;
             let type_parameter2 = rule.parameters.get(1)?;
             let type_wordclass1 = map_pos_tag(type_parameter1);
-            let type_wordclass2 = map_pos_tag(type_parameter1);
+            let type_wordclass2 = map_pos_tag(type_parameter2);
             match (type_wordclass1, type_wordclass2) {
                 (Ok(wordclass1), Ok(wordclass2)) => Option::from(next_bigram(sentence, current_index, wordclass1, wordclass2)),
                 _ => Option::from(false),
@@ -372,13 +366,11 @@ pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i3
         },
 
         RulespecID::NEXT2TAG => {
-            let type_parameter1 = rule.parameters.get(0)?;
-            let type_parameter2 = rule.parameters.get(1)?;
-            let type_wordclass1 = map_pos_tag(type_parameter1);
-            let type_wordclass2 = map_pos_tag(type_parameter1);
-            match (type_wordclass1, type_wordclass2) {
-                (Ok(wordclass1), Ok(wordclass2)) => Option::from(next_two_tags(sentence, current_index, wordclass1, wordclass2)),
-                _ => Option::from(false),
+            let param_original = rule.parameters.get(0)?;
+            let param_wordclass = map_pos_tag(param_original);
+            match param_wordclass {
+                Ok(_wordclass) => { Option::from(next_two_tags(sentence, current_index, _wordclass)) }
+                Err(_) => { Option::from(false) }
             }
         },
 
@@ -393,10 +385,28 @@ pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i3
 
 
 
-pub fn contextual_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: i32, rule: ContextualRulespec) {
+pub fn contextual_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: i32, rule: ContextualRulespec) -> Option<bool> {
+    // Check if Contextual Rule can be run
+    let mut uindex: usize = current_index as usize;
+    let mut check_pair = sentence.get(uindex)?;
+    if check_pair.1 != rule.source_tag {
+        return Option::from(false);
+    }
 
+    // Run Contextual Rule
+    match contextual_rule_holds(sentence.to_owned(), current_index, rule.clone()) {
+        Some(true) => {
+            let mut new_tag = rule.clone().target_tag;
+            sentence[uindex] = (sentence[uindex].0, new_tag);
+            Option::from(true)
+        }
+        _ => Option::from(false),
+    }
 }
 
+
+
+#[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub struct ContextualRulespec {
     pub source_tag: Wordclass,
     pub target_tag: Wordclass,
@@ -415,6 +425,32 @@ impl fmt::Display for ContextualRulespec {
 }
 
 
+#[test]
+fn test_contextual_rule() {
+    let mut sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
+    ];
+
+    let rule: ContextualRulespec = ContextualRulespec {
+        source_tag: Wordclass::JJ,
+        target_tag: Wordclass::NN,
+        ruleset_id: RulespecID::PREVTAG,
+        parameters: vec!["JJ".parse().unwrap()],
+    };
+
+    for (w, c) in sentence.clone() {
+        println!("{} {}", w, c);
+    }
+
+    contextual_rule_apply(sentence.as_mut(), 2, rule);
+
+    for (w, c) in sentence {
+        println!("{} {}", w, c);
+    }
+}
 
 #[test]
 fn test_previous_one_or_two_tag_found() {
