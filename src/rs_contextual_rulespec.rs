@@ -387,8 +387,8 @@ pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i3
 
 pub fn contextual_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: i32, rule: ContextualRulespec) -> Option<bool> {
     // Check if Contextual Rule can be run
-    let mut uindex: usize = current_index as usize;
-    let mut check_pair = sentence.get(uindex)?;
+    let uindex: usize = current_index as usize;
+    let check_pair = sentence.get(uindex)?;
     if check_pair.1 != rule.source_tag {
         return Option::from(false);
     }
@@ -396,7 +396,7 @@ pub fn contextual_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_inde
     // Run Contextual Rule
     match contextual_rule_holds(sentence.to_owned(), current_index, rule.clone()) {
         Some(true) => {
-            let mut new_tag = rule.clone().target_tag;
+            let new_tag = rule.clone().target_tag;
             sentence[uindex] = (sentence[uindex].0, new_tag);
             Option::from(true)
         }
