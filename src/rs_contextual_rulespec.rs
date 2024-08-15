@@ -695,3 +695,43 @@ fn test_previous_one_or_two_word_out_of_bounds() {
     ];
     assert!(!previous_one_or_two_word(sentence.clone(), 0, "quick"));
 }
+
+#[test]
+fn test_prev_two_tag_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+        ("lazy", Wordclass::JJ),
+        ("dog", Wordclass::NN),
+    ];
+    assert!(prev_two_tag(sentence.clone(), 2, Wordclass::DT));
+    assert!(prev_two_tag(sentence.clone(), 3, Wordclass::JJ));
+
+}
+
+#[test]
+fn test_prev_two_tag_not_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+        ("lazy", Wordclass::JJ),
+        ("dog", Wordclass::NN),
+    ];
+    assert!(!prev_two_tag(sentence.clone(), 3, Wordclass::NN));
+    assert!(!prev_two_tag(sentence.clone(), 2, Wordclass::NN));
+
+}
+
+#[test]
+fn test_prev_two_tag_out_of_bounds() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+    ];
+    assert!(!prev_two_tag(sentence.clone(), 0, Wordclass::NN));
+    assert!(!prev_two_tag(sentence.clone(), 1, Wordclass::NN));
+
+}
