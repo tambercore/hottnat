@@ -36,6 +36,7 @@ pub fn f_has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char)
 }
 
 
+/// Function to check if `word` appears in the Wordclass mappings retrieved from the lexicon.
 pub fn is_word_in_lexicon(word: &str, wc_mapping: &WordclassMap) -> bool {
     match wc_mapping.get(word) {
         Some(_) => true,
