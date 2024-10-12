@@ -7,7 +7,7 @@ use crate::rs_wordclass::{Wordclass};
 pub fn parse_lexical_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<LexicalRulespec>>, io::Error>
 {
     println!("{0}", path);
-    let mut result: HashMap<Wordclass, Vec<LexicalRulespec>> = HashMap::new();
+    let result: HashMap<Wordclass, Vec<LexicalRulespec>> = HashMap::new();
     /* for line in read_to_string(path)?.lines() {
         // let parts: Vec<&str> = line.split_whitespace().collect();
 
