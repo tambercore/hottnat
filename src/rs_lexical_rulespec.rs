@@ -3,6 +3,7 @@ use crate::WordclassMap;
 use crate::initialize_tagger;
 use crate::rs_lex_rulespec_id::{LexicalRuleID, LexicalRulespec};
 
+
 /// Function to check if the word at `current_index` has suffix `suffix` and is not yet tagged.
 pub fn has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str) -> bool {
     match sentence.get(current_index as usize) {
@@ -10,6 +11,7 @@ pub fn has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: 
         _ => false,
     }
 }
+
 
 /// Function to check if the word at `current_index` has suffix `suffix` and is tagged as `target_tag`.
 pub fn f_has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, target_tag: Wordclass) -> bool {
@@ -20,6 +22,7 @@ pub fn f_has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix
     }
 }
 
+
 /// Function to check if the word at `current_index` has suffix `prefix` and is not yet tagged.
 pub fn has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str) -> bool {
     match sentence.get(current_index as usize) {
@@ -27,6 +30,7 @@ pub fn has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: 
         _ => false,
     }
 }
+
 
 /// Function to check if the word at `current_index` has suffix `prefix` and is tagged as `target_tag`.
 pub fn f_has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str, target_tag: Wordclass) -> bool {
@@ -37,6 +41,7 @@ pub fn f_has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix
     }
 }
 
+
 /// Function to check if the word at `current_index` contains char `c` and is not yet tagged.
 pub fn has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char) -> bool {
     match sentence.get(current_index as usize) {
@@ -44,6 +49,7 @@ pub fn has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char) -
         _ => false,
     }
 }
+
 
 /// Function to check if the word at `current_index` contains char `c` and is tagged.
 pub fn f_has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char, target_tag: Wordclass) -> bool {
@@ -53,6 +59,7 @@ pub fn f_has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char,
         _ => false,
     }
 }
+
 
 /// Function to check if the word at `current_index` is still a word if `suffix` is added, and is not yet tagged.
 pub fn add_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, wc_mapping: &WordclassMap) -> bool {
@@ -64,6 +71,7 @@ pub fn add_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: 
         _ => false,
     }
 }
+
 
 /// Function to check if the word at `current_index` is still a word if `suffix` is added, and is tagged.
 pub fn f_add_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, target_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
@@ -77,6 +85,7 @@ pub fn f_add_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix
     }
 }
 
+
 /// Function to check if the word at `current_index` is still a word if `suffix` is deleted, and is not yet tagged.
 pub fn delete_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, wc_mapping: &WordclassMap) -> bool {
     match sentence.get(current_index as usize) {
@@ -89,6 +98,7 @@ pub fn delete_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffi
         _ => false,
     }
 }
+
 
 /// Function to check if the word at `current_index` is still a word if `suffix` is deleted, and is tagged.
 pub fn f_delete_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, target_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
@@ -118,6 +128,7 @@ pub fn delete_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefi
     }
 }
 
+
 /// Function to check if the word at `current_index` is still a word if `prefix` is deleted, and is tagged.
 pub fn f_delete_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str, target_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
     match sentence.get(current_index as usize) {
@@ -132,6 +143,7 @@ pub fn f_delete_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, pre
     }
 }
 
+
 /// Function to check if the word to the left of the word at `current_index` is `word` and is not yet tagged.
 pub fn appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
     match sentence.get(current_index as usize) {
@@ -145,6 +157,7 @@ pub fn appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, exp
     }
 
 }
+
 
 /// Function to check if the word to the left of the word at `current_index` is `word` and is tagged.
 pub fn f_appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str, target_tag: Wordclass) -> bool {
@@ -162,6 +175,7 @@ pub fn f_appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, e
 
 }
 
+
 /// Function to check if the word to the right of the word at `current_index` is `word` and is not yet tagged.
 pub fn appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
     match sentence.get(current_index as usize) {
@@ -175,6 +189,7 @@ pub fn appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, ex
     }
 
 }
+
 
 /// Function to check if the word to the right of the word at `current_index` is `word` and is tagged.
 pub fn f_appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str, target_tag: Wordclass) -> bool {
@@ -408,6 +423,7 @@ pub fn lexical_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: 
     }
 }
 
+
 #[test]
 fn test_lexical_rule_apply() {
 
@@ -430,6 +446,7 @@ fn test_lexical_rule_apply() {
 
 }
 
+
 #[test]
 fn test_appears_to_left_found() {
     let sentence = vec![
@@ -443,6 +460,7 @@ fn test_appears_to_left_found() {
     assert!(appears_to_left(sentence.clone(), 2, "quick"));
 
 }
+
 
 #[test]
 fn test_appears_to_left_not_found() {
@@ -472,6 +490,7 @@ fn test_f_appears_to_left_found() {
 
 }
 
+
 #[test]
 fn test_f_appears_to_left_not_found() {
     let sentence = vec![
@@ -484,6 +503,7 @@ fn test_f_appears_to_left_not_found() {
     assert!(!f_appears_to_left(sentence.clone(), 2, "none", Wordclass::JJ));
 
 }
+
 
 #[test]
 fn test_appears_to_right_found() {
@@ -498,6 +518,7 @@ fn test_appears_to_right_found() {
     assert!(appears_to_right(sentence.clone(), 2, "lazy"));
 
 }
+
 
 #[test]
 fn test_appears_to_right_not_found() {
@@ -527,6 +548,7 @@ fn test_f_appears_to_right_found() {
 
 }
 
+
 #[test]
 fn test_f_appears_to_right_not_found() {
     let sentence = vec![
@@ -539,6 +561,7 @@ fn test_f_appears_to_right_not_found() {
     assert!(!f_appears_to_right(sentence.clone(), 2, "none", Wordclass::JJ));
 
 }
+
 
 #[test]
 fn test_delete_suffix_found() {
@@ -554,6 +577,7 @@ fn test_delete_suffix_found() {
     assert!(delete_suffix(sentence.clone(), 2, "n", &wc_mapping));
 
 }
+
 
 #[test]
 fn test_delete_suffix_not_found() {
@@ -585,6 +609,7 @@ fn test_delete_f_suffix_found() {
 
 }
 
+
 #[test]
 fn test_delete_f_suffix_not_found() {
     let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
@@ -598,6 +623,7 @@ fn test_delete_f_suffix_not_found() {
     assert!(!f_delete_suffix(sentence.clone(), 2, "own", Wordclass::JJ, &wc_mapping));
 
 }
+
 
 #[test]
 fn test_delete_prefix_found() {
@@ -613,6 +639,7 @@ fn test_delete_prefix_found() {
     assert!(delete_prefix(sentence.clone(), 2, "un", &wc_mapping));
 
 }
+
 
 #[test]
 fn test_delete_prefix_not_found() {
@@ -645,6 +672,7 @@ fn test_delete_f_prefix_found() {
 
 }
 
+
 #[test]
 fn test_delete_f_prefix_not_found() {
     let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
@@ -676,6 +704,7 @@ fn test_add_suffix_found() {
 
 }
 
+
 #[test]
 fn test_add_suffix_not_found() {
     let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
@@ -691,6 +720,7 @@ fn test_add_suffix_not_found() {
 
 }
 
+
 #[test]
 fn test_add_f_suffix_found() {
     let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
@@ -704,6 +734,7 @@ fn test_add_f_suffix_found() {
     assert!(f_add_suffix(sentence.clone(), 2, "ed", Wordclass::JJ, &wc_mapping));
 
 }
+
 
 #[test]
 fn test_add_f_suffix_not_found() {
@@ -719,12 +750,14 @@ fn test_add_f_suffix_not_found() {
 
 }
 
+
 #[test]
 fn test_word_in_lexicon() {
     let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
     assert!(is_word_in_lexicon("apple", &wc_mapping));
     assert!(is_word_in_lexicon("banana", &wc_mapping));
 }
+
 
 #[test]
 fn test_word_not_in_lexicon() {
@@ -747,6 +780,7 @@ fn test_has_suffix_found() {
     assert!(has_suffix(sentence.clone(), 2, "rown"));
 
 }
+
 
 #[test]
 fn test_has_suffix_not_found() {
@@ -776,6 +810,7 @@ fn test_has_f_suffix_found() {
 
 }
 
+
 #[test]
 fn test_has_f_suffix_not_found() {
     let sentence = vec![
@@ -788,6 +823,7 @@ fn test_has_f_suffix_not_found() {
     assert!(!f_has_suffix(sentence.clone(), 2, "abcd", Wordclass::JJ));
 
 }
+
 
 #[test]
 fn test_has_prefix_found() {
@@ -802,6 +838,7 @@ fn test_has_prefix_found() {
     assert!(has_prefix(sentence.clone(), 2, "bro"));
 
 }
+
 
 #[test]
 fn test_has_prefix_not_found() {
@@ -831,6 +868,7 @@ fn test_has_f_prefix_found() {
 
 }
 
+
 #[test]
 fn test_has_f_prefix_not_found() {
     let sentence = vec![
@@ -844,6 +882,7 @@ fn test_has_f_prefix_not_found() {
 
 }
 
+
 #[test]
 fn test_has_char_found() {
     let sentence = vec![
@@ -856,6 +895,7 @@ fn test_has_char_found() {
     assert!(has_char(sentence.clone(), 2, 'n'));
 
 }
+
 
 #[test]
 fn test_has_char_not_found() {
@@ -883,6 +923,7 @@ fn test_f_has_char_found() {
     assert!(f_has_char(sentence.clone(), 2, 'n', Wordclass::JJ));
 
 }
+
 
 #[test]
 fn test_f_has_char_not_found() {
