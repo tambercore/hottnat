@@ -20,7 +20,7 @@ type WordclassMap = HashMap<String, Vec<Wordclass>>;
 
 
 /// ...
-fn initialize_tagger(path: &str) -> Result<WordclassMap, io::Error>
+pub fn initialize_tagger(path: &str) -> Result<WordclassMap, io::Error>
 {
     // This attempts to read the file, then creates an instance of the WordclassMap.
     let contents = fs::read_to_string(path)?;
