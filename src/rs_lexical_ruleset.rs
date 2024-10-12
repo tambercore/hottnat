@@ -39,14 +39,13 @@ pub fn parse_lexical_ruleset(path: &str) -> Result<Vec<LexicalRulespec>, io::Err
         } else { return Err(io::Error::new(io::ErrorKind::InvalidData, "Target tag not found.")); };
 
         // Finally, any additional parameters are collected, before the structure is added to the vector.
-
         // Parameters should be everything else, so copy each token over unless it's index is in the list {target_tag_index, rulestring_index}
         // Collect parameters by excluding the `rulestring` and `target_tag` tokens.
         let excluded_indices: HashSet<usize> = [rulestring_index, target_tag_index].iter().cloned().collect();
-        let parameters: Vec<String> = parts.iter().enumerate().filter_map(|(index, token)| {
-                if !excluded_indices.contains(&index) { Some(token.clone()) }   // Exclude any index in `excluded_indicies`.
-                else { None }}).collect();                                      // If it's an excluded index, then make it None.
-
+        let parameters: Vec<String> = parts .iter()
+            .enumerate().filter_map(|(index, token)| {
+            if !excluded_indices.contains(&index) { Some(token.to_string())}
+            else { None } } ).collect();
 
         // Encapsulate the rule in the `LexicalRulespec` type, and push to the result vector.
         let new_rulespec = LexicalRulespec {
