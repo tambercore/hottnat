@@ -1,6 +1,7 @@
-use crate::rs_wordclass::Wordclass;
+use crate::rs_wordclass::{map_pos_tag, Wordclass};
 use crate::WordclassMap;
 use crate::initialize_tagger;
+use crate::rs_lex_rulespec_id::{LexicalRuleID, LexicalRulespec};
 
 /// Function to check if the word at `current_index` has suffix `suffix` and is not yet tagged.
 pub fn has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str) -> bool {
@@ -15,6 +16,23 @@ pub fn f_has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
         Some(&(word, ref tag)) => word.ends_with(suffix) && tag == &target_tag,
+        _ => false,
+    }
+}
+
+/// Function to check if the word at `current_index` has suffix `prefix` and is not yet tagged.
+pub fn has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str) -> bool {
+    match sentence.get(current_index as usize) {
+        Some(&(word, Wordclass::ANY)) => word.starts_with(prefix),
+        _ => false,
+    }
+}
+
+/// Function to check if the word at `current_index` has suffix `prefix` and is tagged as `target_tag`.
+pub fn f_has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str, target_tag: Wordclass) -> bool {
+    match sentence.get(current_index as usize) {
+        Some(&(_, Wordclass::ANY)) => false,
+        Some(&(word, ref tag)) => word.starts_with(prefix) && tag == &target_tag,
         _ => false,
     }
 }
@@ -183,58 +201,204 @@ pub fn is_word_in_lexicon(word: &str, wc_mapping: &WordclassMap) -> bool {
     }
 }
 
-/*
+
 /// Checks a given lexical rule.
-pub fn lexical_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i32, rule: LexicalRulespec) -> Option<bool> {
+pub fn lexical_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i32, rule: LexicalRulespec, wc_mapping: &WordclassMap) -> Option<bool> {
 
     match rule.ruleset_id {
-        /*RulespecID::PREVTAG => {
-            let param_original = rule.parameters.get(0)?;
-            let param_wordclass = map_pos_tag(param_original);
-            match param_wordclass {
-                Ok(_wordclass) => { Option::from(previous_tag(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
-            }
-        },*/
-        LexicalRuleID::FHASSUF => {
-            let suffix: &str = rule.parameters.get()
-            has_suffix(sentence, current_index, suffix);
+        LexicalRuleID::HASSUF => {
 
-            /*
-            let param_original = rule.parameters.get(0)?;
-            let param_wordclass = map_pos_tag(param_original);
-            match param_wordclass {
-                Ok(_wordclass) => { Option::from(f_has_suffix(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
-            }*/
+            let suffix: &str = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(has_suffix(sentence, current_index, suffix)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
         }
-        LexicalRuleID::FCHAR => {}
-        LexicalRuleID::HASSUF => {}
-        LexicalRuleID::ADDSUF => {}
-        LexicalRuleID::FGOODRIGHT => {}
-        LexicalRuleID::DELETEPREF => {}
-        LexicalRuleID::FGOODLEFT => {}
-        LexicalRuleID::GOODLEFT => {}
-        LexicalRuleID::GOODRIGHT => {}
-        LexicalRuleID::FDELETESUF => {}
-        LexicalRuleID::CHAR => {}
-        LexicalRuleID::FDELETEPREF => {}
-        LexicalRuleID::FADDSUF => {}
+        LexicalRuleID::FCHAR => {
+            let c = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_has_char(sentence, current_index, c.parse().unwrap(), _wordclass)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::ADDSUF => {
+            let suffix = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(add_suffix(sentence, current_index, suffix, wc_mapping)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::FGOODRIGHT => {
+            let expected_word = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_appears_to_right(sentence, current_index, expected_word, _wordclass)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::DELETEPREF => {
+            let prefix = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(delete_prefix(sentence, current_index, prefix, wc_mapping)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::FGOODLEFT => {
+            let expected_word = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_appears_to_left(sentence, current_index, expected_word, _wordclass)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::GOODLEFT => {
+            let expected_word = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(appears_to_left(sentence, current_index, expected_word)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::GOODRIGHT => {
+            let expected_word = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(appears_to_right(sentence, current_index, expected_word)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::FDELETESUF => {
+            let suffix = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_delete_suffix(sentence, current_index, suffix, _wordclass, wc_mapping)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::CHAR => {
+            let c = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(has_char(sentence, current_index, c.parse().unwrap())) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::FDELETEPREF => {
+            let prefix = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_delete_prefix(sentence, current_index, prefix, _wordclass, wc_mapping)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::FADDSUF => {
+            let suffix = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_add_suffix(sentence, current_index, suffix, _wordclass, wc_mapping)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::FHASSUF => {
+            let suffix: &str = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_has_suffix(sentence, current_index, suffix, _wordclass)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::FHASPREF => {
+            let suffix: &str = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(f_has_prefix(sentence, current_index, suffix, _wordclass)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
+        LexicalRuleID::DELETESUF => {
+            let suffix = rule.parameters.get(1)?;
+            let target_tag= rule.parameters.get(0)?;
+            let target_tag_wc = map_pos_tag(target_tag);
+
+            match target_tag_wc {
+                Ok(_wordclass) => { Option::from(delete_suffix(sentence, current_index, suffix, wc_mapping)) }
+                Err(_) => {
+                    Option::from(false)
+                }
+            }
+        }
     }
 }
 
 
 /// Applies a given lexical rule.
 pub fn lexical_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: i32, rule: LexicalRulespec) -> Option<bool> {
-    // Check if Contextual Rule can be run
-    let uindex: usize = current_index as usize;
-    let check_pair = sentence.get(uindex)?;
-    if check_pair.1 != rule.source_tag {
-        return Option::from(false);
-    }
+    let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
-    // Run Contextual Rule
-    match crate::rs_contextual_rulespec::contextual_rule_holds(sentence.to_owned(), current_index, rule.clone()) {
+    let uindex: usize = current_index as usize;
+
+    // Run Lexical Rule
+    match lexical_rule_holds(sentence.to_owned(), current_index, rule.clone(), &wc_mapping) {
         Some(true) => {
             let new_tag = rule.clone().target_tag;
             sentence[uindex] = (sentence[uindex].0, new_tag);
@@ -243,7 +407,29 @@ pub fn lexical_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: 
         _ => Option::from(false),
     }
 }
-*/
+
+#[test]
+fn test_lexical_rule_apply() {
+
+    let mut sentence_untagged = vec![
+        ("The", Wordclass::ANY),
+        ("quick", Wordclass::ANY),
+        ("brown", Wordclass::ANY),
+        ("lazy", Wordclass::ANY),
+        ("dog", Wordclass::ANY),
+    ];
+
+    let rule_hassuf = LexicalRulespec {
+        ruleset_id: LexicalRuleID::HASSUF,
+        target_tag: Wordclass::ANY,
+        parameters: vec![String::from("''"), "ick".parse().unwrap()],
+    };
+
+    assert!(lexical_rule_apply(&mut sentence_untagged, 1, rule_hassuf).unwrap());
+
+
+}
+
 #[test]
 fn test_appears_to_left_found() {
     let sentence = vec![
@@ -505,7 +691,6 @@ fn test_add_suffix_not_found() {
 
 }
 
-
 #[test]
 fn test_add_f_suffix_found() {
     let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
@@ -601,6 +786,61 @@ fn test_has_f_suffix_not_found() {
     ];
     assert!(!f_has_suffix(sentence.clone(), 1, "ick", Wordclass::ANY));
     assert!(!f_has_suffix(sentence.clone(), 2, "abcd", Wordclass::JJ));
+
+}
+
+#[test]
+fn test_has_prefix_found() {
+    let sentence = vec![
+        ("The", Wordclass::ANY),
+        ("quick", Wordclass::ANY),
+        ("brown", Wordclass::ANY),
+        ("lazy", Wordclass::ANY),
+        ("dog", Wordclass::ANY),
+    ];
+    assert!(has_prefix(sentence.clone(), 1, "qui"));
+    assert!(has_prefix(sentence.clone(), 2, "bro"));
+
+}
+
+#[test]
+fn test_has_prefix_not_found() {
+    let sentence = vec![
+        ("The", Wordclass::ANY),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::ANY),
+        ("lazy", Wordclass::ANY),
+        ("dog", Wordclass::ANY),
+    ];
+    assert!(!has_prefix(sentence.clone(), 1, "qui"));
+    assert!(!has_prefix(sentence.clone(), 2, "abcd"));
+
+}
+
+
+#[test]
+fn test_has_f_prefix_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
+    ];
+    assert!(f_has_prefix(sentence.clone(), 1, "qui", Wordclass::JJ));
+    assert!(f_has_prefix(sentence.clone(), 2, "bro", Wordclass::JJ));
+
+}
+
+#[test]
+fn test_has_f_prefix_not_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::ANY),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
+    ];
+    assert!(!f_has_prefix(sentence.clone(), 1, "qui", Wordclass::ANY));
+    assert!(!f_has_prefix(sentence.clone(), 2, "abcd", Wordclass::JJ));
 
 }
 
