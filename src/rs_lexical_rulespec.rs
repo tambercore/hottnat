@@ -1,14 +1,6 @@
 use crate::rs_wordclass::Wordclass;
 
 
-/// Function to check if the tag at `current_index` - 1 is equal to `tag` in a sentence.
-pub fn previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
-    match sentence.get((current_index - 1) as usize) {
-        Some((_, ref _tag)) if _tag == &tag => true,
-        _ => false,
-    }
-}
-
 /// Function to check if the word at `current_index` has suffix `suffix` and is not yet tagged.
 pub fn has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str) -> bool {
     match sentence.get(current_index as usize) {
