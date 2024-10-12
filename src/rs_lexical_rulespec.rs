@@ -14,10 +14,10 @@ pub fn has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: 
 
 
 /// Function to check if the word at `current_index` has suffix `suffix` and is tagged as `target_tag`.
-pub fn f_has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, target_tag: Wordclass) -> bool {
+pub fn f_has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, source_tag: Wordclass) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
-        Some(&(word, ref tag)) => word.ends_with(suffix) && tag == &target_tag,
+        Some(&(word, ref tag)) => word.ends_with(suffix) && tag == &source_tag,
         _ => false,
     }
 }
@@ -33,10 +33,10 @@ pub fn has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: 
 
 
 /// Function to check if the word at `current_index` has suffix `prefix` and is tagged as `target_tag`.
-pub fn f_has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str, target_tag: Wordclass) -> bool {
+pub fn f_has_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str, source_tag: Wordclass) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
-        Some(&(word, ref tag)) => word.starts_with(prefix) && tag == &target_tag,
+        Some(&(word, ref tag)) => word.starts_with(prefix) && tag == &source_tag,
         _ => false,
     }
 }
@@ -52,10 +52,10 @@ pub fn has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char) -
 
 
 /// Function to check if the word at `current_index` contains char `c` and is tagged.
-pub fn f_has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char, target_tag: Wordclass) -> bool {
+pub fn f_has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char, source_tag: Wordclass) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
-        Some(&(word, ref tag)) => word.contains(c) && tag == &target_tag,
+        Some(&(word, ref tag)) => word.contains(c) && tag == &source_tag,
         _ => false,
     }
 }
@@ -74,12 +74,12 @@ pub fn add_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: 
 
 
 /// Function to check if the word at `current_index` is still a word if `suffix` is added, and is tagged.
-pub fn f_add_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, target_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
+pub fn f_add_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, source_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
         Some(&(word, ref tag)) => {
             let modified_word = word.to_string() + suffix;
-            is_word_in_lexicon(modified_word.as_str(), wc_mapping) && tag == &target_tag
+            is_word_in_lexicon(modified_word.as_str(), wc_mapping) && tag == &source_tag
         },
         _ => false,
     }
@@ -101,12 +101,12 @@ pub fn delete_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffi
 
 
 /// Function to check if the word at `current_index` is still a word if `suffix` is deleted, and is tagged.
-pub fn f_delete_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, target_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
+pub fn f_delete_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str, source_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
         Some(&(word, ref tag)) => {
             match word.strip_suffix(suffix) {
-                Some(modified_word) => is_word_in_lexicon(modified_word, wc_mapping) && tag == &target_tag,
+                Some(modified_word) => is_word_in_lexicon(modified_word, wc_mapping) && tag == &source_tag,
                 _ => false
             }
         },
@@ -130,12 +130,12 @@ pub fn delete_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefi
 
 
 /// Function to check if the word at `current_index` is still a word if `prefix` is deleted, and is tagged.
-pub fn f_delete_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str, target_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
+pub fn f_delete_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, prefix: &str, source_tag: Wordclass, wc_mapping: &WordclassMap) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
         Some(&(word, ref tag)) => {
             match word.strip_prefix(prefix) {
-                Some(modified_word) => is_word_in_lexicon(modified_word, wc_mapping) && tag == &target_tag,
+                Some(modified_word) => is_word_in_lexicon(modified_word, wc_mapping) && tag == &source_tag,
                 _ => false
             }
         },
@@ -160,13 +160,13 @@ pub fn appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, exp
 
 
 /// Function to check if the word to the left of the word at `current_index` is `word` and is tagged.
-pub fn f_appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str, target_tag: Wordclass) -> bool {
+pub fn f_appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str, source_tag: Wordclass) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
         Some(&(_, ref tag)) => {
             match sentence.get((current_index - 1) as usize) {
 
-                Some(&(word, _)) => word == expected_word && tag == &target_tag,
+                Some(&(word, _)) => word == expected_word && tag == &source_tag,
                 _ => false,
             }
         }
@@ -192,13 +192,13 @@ pub fn appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, ex
 
 
 /// Function to check if the word to the right of the word at `current_index` is `word` and is tagged.
-pub fn f_appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str, target_tag: Wordclass) -> bool {
+pub fn f_appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str, source_tag: Wordclass) -> bool {
     match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
         Some(&(_, ref tag)) => {
             match sentence.get((current_index + 1) as usize) {
 
-                Some(&(word, _)) => word == expected_word && tag == &target_tag,
+                Some(&(word, _)) => word == expected_word && tag == &source_tag,
                 _ => false,
             }
         }
