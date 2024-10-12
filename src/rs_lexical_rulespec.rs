@@ -113,6 +113,52 @@ pub fn f_delete_prefix(sentence: Vec<(&str, Wordclass)>, current_index: i32, pre
     }
 }
 
+/// Function to check if the word to the left of the word at `current_index` is `word` and is not yet tagged.
+pub fn appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
+    match sentence.get(current_index as usize) {
+        Some(&(word, Wordclass::ANY)) => {
+            match sentence.get((current_index - 1) as usize) {
+                Some(&(word, _)) => word == expected_word,
+                _ => false,
+            }
+        }
+        _ => false
+    }
+
+}
+/// Function to check if the word to the left of the word at `current_index` is `word` and is tagged.
+pub fn f_appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
+    match sentence.get(current_index as usize) {
+        Some(&(_, Wordclass::ANY)) => false,
+        Some(&(word, _)) => {
+            match sentence.get((current_index - 1) as usize) {
+
+                Some(&(word, _)) => word == expected_word,
+                _ => false,
+            }
+        }
+        _ => false
+    }
+
+}
+
+/// Function to check if the word to the right of the word at `current_index` is `word` and is not yet tagged.
+pub fn appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
+    match sentence.get((current_index + 1) as usize) {
+        Some(&(word, Wordclass::ANY)) => word == expected_word,
+        _ => false,
+    }
+}
+
+/// Function to check if the word to the right of the word at `current_index` is `word` and is tagged.
+pub fn f_appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
+    match sentence.get((current_index + 1) as usize) {
+        Some(&(_, Wordclass::ANY)) => false,
+        Some(&(word, _)) => word == expected_word,
+        _ => false,
+    }
+}
+
 
 /// Function to check if `word` appears in the Wordclass mappings retrieved from the lexicon.
 pub fn is_word_in_lexicon(word: &str, wc_mapping: &WordclassMap) -> bool {
@@ -122,6 +168,60 @@ pub fn is_word_in_lexicon(word: &str, wc_mapping: &WordclassMap) -> bool {
     }
 }
 
+#[test]
+fn test_appears_to_left_found() {
+    let sentence = vec![
+        ("The", Wordclass::ANY),
+        ("quick", Wordclass::ANY),
+        ("brown", Wordclass::ANY),
+        ("lazy", Wordclass::ANY),
+        ("dog", Wordclass::ANY),
+    ];
+    assert!(appears_to_left(sentence.clone(), 1, "The"));
+    assert!(appears_to_left(sentence.clone(), 2, "quick"));
+
+}
+
+#[test]
+fn test_appears_to_left_not_found() {
+    let sentence = vec![
+        ("The", Wordclass::ANY),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::ANY),
+        ("lazy", Wordclass::ANY),
+        ("dog", Wordclass::ANY),
+    ];
+    assert!(!appears_to_left(sentence.clone(), 1, "The"));
+    assert!(!appears_to_left(sentence.clone(), 2, "none"));
+
+}
+
+
+#[test]
+fn test_f_appears_to_left_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
+    ];
+    assert!(f_appears_to_left(sentence.clone(), 1, "The"));
+    assert!(f_appears_to_left(sentence.clone(), 2, "quick"));
+
+}
+
+#[test]
+fn test_f_appears_to_left_not_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quickest", Wordclass::ANY),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
+    ];
+    assert!(!f_appears_to_left(sentence.clone(), 1, "The"));
+    assert!(!f_appears_to_left(sentence.clone(), 2, "none"));
+
+}
 
 #[test]
 fn test_delete_suffix_found() {
