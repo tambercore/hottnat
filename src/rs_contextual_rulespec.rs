@@ -436,9 +436,9 @@ fn test_contextual_rule() {
 
     let rule: ContextualRulespec = ContextualRulespec {
         source_tag: Wordclass::JJ,
-        target_tag: Wordclass::NN,
-        ruleset_id: RulespecID::PREVTAG,
-        parameters: vec!["JJ".parse().unwrap()],
+        target_tag: Wordclass::FW,
+        ruleset_id: RulespecID::SURROUNDTAG,
+        parameters: vec!["NN".parse().unwrap(), "NN".parse().unwrap()],
     };
 
     for (w, c) in sentence.clone() {
