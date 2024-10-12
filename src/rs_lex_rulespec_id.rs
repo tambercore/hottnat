@@ -27,6 +27,8 @@ pub enum LexicalRuleID {
     CHAR,
     FDELETEPREF,
     FADDSUF,
+    FHASPREF,
+    DELETESUF,
 }
 
 /// Implementation to display LexicalRuleID in CLI.
@@ -46,6 +48,8 @@ impl fmt::Display for LexicalRuleID {
             LexicalRuleID::CHAR => "Character",
             LexicalRuleID::FDELETEPREF => "Final Delete Prefix",
             LexicalRuleID::FADDSUF => "Final Add Suffix",
+            LexicalRuleID::FHASPREF => "Final Has Prefix",
+            LexicalRuleID::DELETESUF => "Delete Suffix",
         };
         write!(f, "{}", name)
     }
@@ -67,6 +71,8 @@ pub fn map_lexical_rule_id(string: &str) -> Result<LexicalRuleID, Error> {
         "char" => Ok(LexicalRuleID::CHAR),
         "fdeletepref" => Ok(LexicalRuleID::FDELETEPREF),
         "faddsuf" => Ok(LexicalRuleID::FADDSUF),
+        "fhaspref" => Ok(LexicalRuleID::FHASPREF),
+        "deletesuf" => Ok(LexicalRuleID::DELETESUF),
         _ => Err(Error::new(ErrorKind::InvalidData, format!("Invalid LexicalRuleID Identifier: {}", string))),
     }
 }

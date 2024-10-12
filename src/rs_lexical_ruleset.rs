@@ -9,6 +9,9 @@ pub fn parse_lexical_ruleset(path: &str) -> Result<Vec<LexicalRulespec>, io::Err
 {
     let mut result: Vec<LexicalRulespec> = Vec::new();
     for line in read_to_string(path)?.lines() {
+
+        println!("Parsing line {0}", line);
+
         let parts: Vec<&str> = line.split_whitespace().collect();
 
         // Brill's original lexical rules come in a (somewhat weird) variety of forms, with each rule varying in syntactic structure.
@@ -54,4 +57,29 @@ pub fn parse_lexical_ruleset(path: &str) -> Result<Vec<LexicalRulespec>, io::Err
         result.push(new_rulespec);
     }
     Ok(result)
+}
+
+#[test]
+pub fn test_parse_lexical_rules() {
+    // Call parse_lexical_ruleset and handle the Result directly.
+    let lexical_rules = parse_lexical_ruleset("data/rulefile_lexical.txt");
+
+    // Assert that the result is Ok and contains the expected data.
+    match lexical_rules {
+        Ok(rules) => {
+            // You can assert that the map is not empty, or check for specific keys/values
+            assert!(!rules.is_empty(), "The lexical rules should not be empty.");
+
+            // You could also check specific values inside the HashMap.
+            for rule_specs in rules {
+                // Example assertions: you might want to assert that specific Wordclasses
+                // exist and that there are valid rule specs.
+                println!("Rule: {:?}", rule_specs); // Optional printing for debugging.
+            }
+        },
+        Err(e) => {
+            // If the function returns Err, you can fail the test with a message.
+            panic!("Failed to parse lexical rules: {}", e);
+        }
+    }
 }

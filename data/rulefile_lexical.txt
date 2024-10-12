@@ -30,7 +30,6 @@ VBZ The fgoodright NNS x
 NNP ts fhassuf 2 NNS x
 NN 4 fchar CD x
 NN ize fhassuf 3 VB x
-.. hassuf 2 : x
 ful hassuf 3 JJ x
 NN ate fhassuf 3 VB x
 NNP ing fhassuf 3 VBG x
@@ -144,5 +143,4 @@ VBN scr fhaspref 3 VBD x
 uces hassuf 4 VBZ x
 fies hassuf 4 VBZ x
 self deletesuf 4 PRP x
-NNP $ fchar $ x
 VBN wa fhaspref 2 VBD x
