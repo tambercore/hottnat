@@ -1,13 +1,13 @@
 use std::fs::read_to_string;
 use crate::rs_wordclass::{map_pos_tag, Wordclass};
-use std::io::{self, Error, ErrorKind};
+use std::io::{Error, ErrorKind};
 use crate::rs_rulespec_id::*;
 use crate::rs_contextual_rulespec::*;
 use std::collections::HashMap;
 
 
 /// ...
-pub fn parse_contextual_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<ContextualRulespec>>, io::Error>
+pub fn parse_contextual_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<ContextualRulespec>>, Error>
 {
     let mut result: HashMap<Wordclass, Vec<ContextualRulespec>> = HashMap::new();
     for line in read_to_string(path)?.lines() {
