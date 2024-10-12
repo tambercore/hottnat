@@ -126,6 +126,7 @@ pub fn appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, exp
     }
 
 }
+
 /// Function to check if the word to the left of the word at `current_index` is `word` and is tagged.
 pub fn f_appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
     match sentence.get(current_index as usize) {
@@ -144,19 +145,32 @@ pub fn f_appears_to_left(sentence: Vec<(&str, Wordclass)>, current_index: i32, e
 
 /// Function to check if the word to the right of the word at `current_index` is `word` and is not yet tagged.
 pub fn appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
-    match sentence.get((current_index + 1) as usize) {
-        Some(&(word, Wordclass::ANY)) => word == expected_word,
-        _ => false,
+    match sentence.get(current_index as usize) {
+        Some(&(word, Wordclass::ANY)) => {
+            match sentence.get((current_index + 1) as usize) {
+                Some(&(word, _)) => word == expected_word,
+                _ => false,
+            }
+        }
+        _ => false
     }
+
 }
 
 /// Function to check if the word to the right of the word at `current_index` is `word` and is tagged.
 pub fn f_appears_to_right(sentence: Vec<(&str, Wordclass)>, current_index: i32, expected_word: &str) -> bool {
-    match sentence.get((current_index + 1) as usize) {
+    match sentence.get(current_index as usize) {
         Some(&(_, Wordclass::ANY)) => false,
-        Some(&(word, _)) => word == expected_word,
-        _ => false,
+        Some(&(word, _)) => {
+            match sentence.get((current_index + 1) as usize) {
+
+                Some(&(word, _)) => word == expected_word,
+                _ => false,
+            }
+        }
+        _ => false
     }
+
 }
 
 
@@ -220,6 +234,61 @@ fn test_f_appears_to_left_not_found() {
     ];
     assert!(!f_appears_to_left(sentence.clone(), 1, "The"));
     assert!(!f_appears_to_left(sentence.clone(), 2, "none"));
+
+}
+
+#[test]
+fn test_appears_to_right_found() {
+    let sentence = vec![
+        ("The", Wordclass::ANY),
+        ("quick", Wordclass::ANY),
+        ("brown", Wordclass::ANY),
+        ("lazy", Wordclass::ANY),
+        ("dog", Wordclass::ANY),
+    ];
+    assert!(appears_to_right(sentence.clone(), 1, "brown"));
+    assert!(appears_to_right(sentence.clone(), 2, "lazy"));
+
+}
+
+#[test]
+fn test_appears_to_right_not_found() {
+    let sentence = vec![
+        ("The", Wordclass::ANY),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::ANY),
+        ("lazy", Wordclass::ANY),
+        ("dog", Wordclass::ANY),
+    ];
+    assert!(!appears_to_right(sentence.clone(), 1, "brown"));
+    assert!(!appears_to_right(sentence.clone(), 2, "none"));
+
+}
+
+
+#[test]
+fn test_f_appears_to_right_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
+    ];
+    assert!(f_appears_to_right(sentence.clone(), 1, "brown"));
+    assert!(f_appears_to_right(sentence.clone(), 2, "fox"));
+
+}
+
+#[test]
+fn test_f_appears_to_right_not_found() {
+    let sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::ANY),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
+    ];
+    assert!(!f_appears_to_right(sentence.clone(), 1, "quick"));
+    assert!(!f_appears_to_right(sentence.clone(), 2, "none"));
 
 }
 
