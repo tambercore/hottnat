@@ -1,5 +1,5 @@
 use crate::rs_wordclass::Wordclass;
-
+use crate::{initialize_tagger, WordclassMap};
 
 /// Function to check if the word at `current_index` has suffix `suffix` and is not yet tagged.
 pub fn has_suffix(sentence: Vec<(&str, Wordclass)>, current_index: i32, suffix: &str) -> bool {
@@ -34,6 +34,29 @@ pub fn f_has_char(sentence: Vec<(&str, Wordclass)>, current_index: i32, c: char)
         _ => false,
     }
 }
+
+
+pub fn is_word_in_lexicon(word: &str, wc_mapping: &WordclassMap) -> bool {
+    match wc_mapping.get(word) {
+        Some(_) => true,
+        _ => false
+    }
+}
+
+#[test]
+fn test_word_in_lexicon() {
+    let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+    assert!(is_word_in_lexicon("apple", &wc_mapping));
+    assert!(is_word_in_lexicon("banana", &wc_mapping));
+}
+
+#[test]
+fn test_word_not_in_lexicon() {
+    let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+    assert!(!is_word_in_lexicon("abcde", &wc_mapping));
+    assert!(!is_word_in_lexicon("", &wc_mapping));
+}
+
 
 #[test]
 fn test_has_suffix_found() {
@@ -140,5 +163,4 @@ fn test_f_has_char_not_found() {
     ];
     assert!(!f_has_char(sentence.clone(), 1, 'q'));
     assert!(!f_has_char(sentence.clone(), 2, 'k'));
-
 }
