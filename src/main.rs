@@ -6,6 +6,8 @@ mod rs_lex_rulespec_id;
 mod rs_lexical_ruleset;
 mod rs_lexical_rulespec;
 
+
+
 use std::collections::HashMap;
 use std::fs;
 use std::io::{self, Error, Write};
@@ -60,6 +62,7 @@ fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
 
 
 fn main() -> io::Result<()> {
+
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
     let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
 
