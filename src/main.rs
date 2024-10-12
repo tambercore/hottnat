@@ -4,6 +4,7 @@ mod rs_rulespec_id;
 mod rs_contextual_rulespec;
 mod rs_lex_rulespec_id;
 mod rs_lexical_ruleset;
+mod rs_lexical_rulespec;
 
 use std::collections::HashMap;
 use std::fs;
