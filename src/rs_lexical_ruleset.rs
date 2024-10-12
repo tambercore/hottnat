@@ -1,41 +1,58 @@
-use std::collections::HashMap;
+use std::collections::{HashSet};
+use std::fs::read_to_string;
 use std::io;
-use crate::rs_lex_rulespec_id::LexicalRulespec;
-use crate::rs_wordclass::{Wordclass};
+use crate::rs_lex_rulespec_id::{map_lexical_rule_id, LexicalRulespec};
+use crate::rs_wordclass::{map_pos_tag, Wordclass};
 
 /// ...
-pub fn parse_lexical_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<LexicalRulespec>>, io::Error>
+pub fn parse_lexical_ruleset(path: &str) -> Result<Vec<LexicalRulespec>, io::Error>
 {
-    println!("{0}", path);
-    let mut result: HashMap<Wordclass, Vec<LexicalRulespec>> = HashMap::new();
-    /* for line in read_to_string(path)?.lines() {
-        // let parts: Vec<&str> = line.split_whitespace().collect();
+    let mut result: Vec<LexicalRulespec> = Vec::new();
+    for line in read_to_string(path)?.lines() {
+        let parts: Vec<&str> = line.split_whitespace().collect();
 
         // Brill's original lexical rules come in a (somewhat weird) variety of forms, with each rule varying in syntactic structure.
         // The only common attributes are the `rulestring` and `target_tag`, as some rules are source-tag ambiguous. This processes it.
 
-        // If the first token is a tag, then the rulestring is the 3rd token, otherwise it is the second.
+        // Firstly, we will obtain the rulestring attribute, which is a primary identifier for the given lexical rule. This is either
+        // the 2nd or 3rd token (meaning indexed at 1 or 2). If there is not a valid rulestring at either, then the something is wrong.
+        let (ruleset_id, rulestring_index) = if let Some(maybe_rulestring) = parts.get(1) {
+            match map_lexical_rule_id(maybe_rulestring) {
+                Ok(rulespec) => (rulespec, 1), // Found at index 1
+                Err(_) => {
+                    if let Some(maybe_rulestring) = parts.get(2) {
+                        match map_lexical_rule_id(maybe_rulestring) {
+                            Ok(rulespec) => (rulespec, 2), // Found at index 2
+                            Err(_) => return Err(io::Error::new(io::ErrorKind::InvalidData, "Invalid rulestring")),
+                        }
+                    } else { return Err(io::Error::new(io::ErrorKind::InvalidData, "Couldn't grab 3rd token.")); }
+                }
+            }
+        } else { return Err(io::Error::new(io::ErrorKind::InvalidData, "Couldn't grab 1st token.")); };
 
-        let maybe_rulestring: &str = parts.get()
-
-        let source: &str = parts.first().ok_or_else(|| Error::new(ErrorKind::InvalidData, "Missing source tag"))?;
-        let target: &str = parts.get(1).ok_or_else(|| Error::new(ErrorKind::InvalidData, "Missing target tag"))?;
-        let rulestring: &str = parts.get(2).ok_or_else(|| Error::new(ErrorKind::InvalidData, "Missing ruleset ID"))?;
-
-        // Since `source` and `target` should map to POS tags, the rulespec ID should also map.
-        let source_tag: Wordclass = map_pos_tag(source)?;
-        let target_tag: Wordclass = map_pos_tag(target)?;
-        let ruleset_id: RulespecID = map_rulespec_id(rulestring)?;
+        // The `target_tag` is always the second to final token in the vector. We can find this by searching the
+        // position at `len(parts) - 2`. If it's not here, something is wrong.
+        const TARGET_TAG_INSET: i8 = 2;
+        let target_tag_index: usize = parts.len() - TARGET_TAG_INSET as usize;
+        let target_tag: Wordclass = if let Some(target_tag_str) = parts.get(target_tag_index) {
+            map_pos_tag(target_tag_str)?
+        } else { return Err(io::Error::new(io::ErrorKind::InvalidData, "Target tag not found.")); };
 
         // Finally, any additional parameters are collected, before the structure is added to the vector.
-        let parameters: Vec<String> = parts.iter().skip(3).map(|s| s.to_string()).collect();
-        let new_rulespec = LexicalRulespec {
-            source_tag: source_tag.clone(), target_tag, ruleset_id, parameters,
-        };
 
-        // Append the rule specification into the vector mapping of the source tag, meaning this rule applies to the source tag.
-        result.entry(source_tag).or_default().push(new_rulespec);
+        // Parameters should be everything else, so copy each token over unless it's index is in the list {target_tag_index, rulestring_index}
+        // Collect parameters by excluding the `rulestring` and `target_tag` tokens.
+        let excluded_indices: HashSet<usize> = [rulestring_index, target_tag_index].iter().cloned().collect();
+        let parameters: Vec<String> = parts.iter().enumerate().filter_map(|(index, token)| {
+                if !excluded_indices.contains(&index) { Some(token.clone()) }   // Exclude any index in `excluded_indicies`.
+                else { None }}).collect();                                      // If it's an excluded index, then make it None.
+
+
+        // Encapsulate the rule in the `LexicalRulespec` type, and push to the result vector.
+        let new_rulespec = LexicalRulespec {
+            ruleset_id, target_tag, parameters
+        };
+        result.push(new_rulespec);
     }
-    */
     Ok(result)
 }
