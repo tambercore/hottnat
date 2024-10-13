@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 itertools = "*"
+serde = "1.0"
+serde_json = "1.0"
