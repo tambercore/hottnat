@@ -7,11 +7,6 @@ on:
       - production
 
 jobs:
-  permissions:
-    contents: read
-    pull-requests: write
-    id-token: write
-
   build_and_test:
     runs-on: ubuntu-latest
 
@@ -50,11 +45,11 @@ jobs:
           script: |
             const buildOutcome = process.env.BUILD_OUTCOME;
             const testOutcome = process.env.TEST_OUTCOME;
-  
+            
             let message = `### Build and Test Results\n`;
             message += `- **cargo build**: ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
             message += `- **cargo test**: ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
-  
+            
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
