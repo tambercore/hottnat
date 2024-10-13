@@ -12,7 +12,7 @@ use crate::rs_lexical_rulespec::lexical_rule_apply;
 fn tag_sentence(sentence: &str) {
     //let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
-    let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
     println!("sentence: {}\n", sentence);
 
@@ -20,7 +20,7 @@ fn tag_sentence(sentence: &str) {
     println!("tokenised sentence: {:?}", tokenised_sentence);
 
     // Match each word with its list of possible tags
-    let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, &wc_mapping);
+    let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, &mut wc_mapping);
     println!("possible tags: {:?}\n", words_to_tags);
 
     // Create a vector of tuples: strings to the first element in the list
@@ -101,9 +101,9 @@ fn tokenize_sentence(sentence: &str) -> Vec<String> {
 }
 
 /// Given a tokenized `sentence` and mapping `wc_mapping`, retrieve the possible tags for each word.
-fn get_possible_tags(sentence: Vec<String>, wc_mapping: &WordclassMap) -> Vec<(String, Vec<Wordclass>)> {
+fn get_possible_tags(sentence: Vec<String>, wc_mapping: &mut WordclassMap) -> Vec<(String, Vec<Wordclass>)> {
     sentence.iter()
-        .map(|word| (word.as_str().to_owned(), wc_mapping.get(word.as_str()).ok_or(format!("Word not in lexicon: {}", word)).unwrap().to_owned()))
+        .map(|word| (word.as_str().to_owned(), wc_mapping.entry(word.as_str().parse().unwrap()).or_insert(vec![Wordclass::ANY]).to_owned()))
         .collect()
 }
 
@@ -116,6 +116,5 @@ fn retrieve_sentence_to_tag(sentence: Vec<(String, Vec<Wordclass>)>) -> Vec<(Str
 
 #[test]
 fn test_tag_sentence() {
-    tag_sentence("it's now some years since I detected how many were the false
-beliefs that I had from my earliest youth admitted as true");
+    tag_sentence("it's asjdlh");
 }
