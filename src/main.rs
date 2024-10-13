@@ -14,9 +14,6 @@ use std::io::{self, Error, Write};
 use rs_wordclass::*;
 use rs_contextual_rulespec::*;
 use rs_contextual_ruleset::*;
-use crate::rs_lex_rulespec_id::LexicalRulespec;
-use crate::rs_lexical_ruleset::parse_lexical_ruleset;
-use crate::rs_lexical_rulespec::lexical_rule_apply;
 
 type WordclassMap = HashMap<String, Vec<Wordclass>>;
 
@@ -65,7 +62,7 @@ fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
 fn main() -> io::Result<()> {
 
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
-    let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt")?;
+    //let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt")?;
 
     let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
 

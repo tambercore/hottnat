@@ -10,7 +10,7 @@ pub fn parse_lexical_ruleset(path: &str) -> Result<Vec<LexicalRulespec>, io::Err
     let mut result: Vec<LexicalRulespec> = Vec::new();
     for line in read_to_string(path)?.lines() {
 
-        println!("Parsing line {0}", line);
+        //println!("Parsing line {0}", line);
 
         let parts: Vec<&str> = line.split_whitespace().collect();
 
