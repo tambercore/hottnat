@@ -5,8 +5,7 @@ mod rs_contextual_rulespec;
 mod rs_lex_rulespec_id;
 mod rs_lexical_ruleset;
 mod rs_lexical_rulespec;
-
-
+mod rs_contractions;
 
 use std::collections::HashMap;
 use std::fs;
@@ -62,8 +61,6 @@ fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
 fn main() -> io::Result<()> {
 
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
-    //let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt")?;
-
     let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
 
     loop {
