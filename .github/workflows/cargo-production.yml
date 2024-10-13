@@ -47,8 +47,10 @@ jobs:
             const testOutcome = process.env.TEST_OUTCOME;
             
             let message = `### Build and Test Results\n`;
-            message += `- **cargo build**: ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
-            message += `- **cargo test**: ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            message += `| **Step**        | **Result**         |\n`;
+            message += `|-----------------|--------------------|\n`;
+            message += `| **cargo build** | ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
+            message += `| **cargo test** | ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'} |\n`;
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
