@@ -14,7 +14,12 @@ fn tag_sentence(sentence: &str) {
 
     println!("sentence: {}\n", sentence);
 
-    let tokenised_sentence: Vec<String> = sentence.split_whitespace().map(|word|find_contractions(String::from(word)).unwrap()).flatten().collect();
+    let tokenised_sentence: Vec<String> = sentence.split_whitespace().
+        map(|word|find_contractions(String::from(word))
+            .unwrap())
+        .flatten()
+        .collect();
+
     println!("tokenised sentence: {:?}", tokenised_sentence);
 
     // Match each word with its list of possible tags
