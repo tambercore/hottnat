@@ -1,6 +1,5 @@
 use crate::rs_wordclass::{map_pos_tag, Wordclass};
-use crate::WordclassMap;
-use crate::initialize_tagger;
+use crate::{initialize_tagger, WordclassMap};
 use crate::rs_lex_rulespec_id::{LexicalRuleID, LexicalRulespec};
 use itertools::Itertools;
 

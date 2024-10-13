@@ -58,7 +58,7 @@ fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possib
             }
         }
         if are_tags_valid(&sentence_to_tag, &possible_tags) {return Some(true)}
-        if(iterations == threshold) {return None;}
+        if iterations == threshold {return None;}
         iterations +=1;
     }
 
