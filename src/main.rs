@@ -6,7 +6,7 @@ mod rs_lex_rulespec_id;
 mod rs_lexical_ruleset;
 mod rs_lexical_rulespec;
 mod rs_contractions;
-
+mod rs_brill_tagger;
 use std::collections::HashMap;
 use std::fs;
 use std::io::{self, Error, Write};
