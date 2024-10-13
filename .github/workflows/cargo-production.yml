@@ -25,28 +25,32 @@ jobs:
 
       # Build the project
       - name: Run cargo build
+        id: build_step
         run: cargo build --verbose
 
       # Run tests
       - name: Run cargo test
+        id: test_step
         run: cargo test --verbose
 
-      # Comment on the pull request with the result
+      # Post comment on the pull request with build and test results
       - name: Post comment on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
-        with:
-          script: |
-            const build_result = steps.build_step.outcome;
-            const test_result = steps.test_step.outcome;
+        env:
+          BUILD_OUTCOME: ${{ steps.build_step.outcome }}
+          TEST_OUTCOME: ${{ steps.test_step.outcome }}
+        script: |
+          const buildOutcome = process.env.BUILD_OUTCOME;
+          const testOutcome = process.env.TEST_OUTCOME;
 
-            let message = `### Build and Test Results\n`;
-            message += `- **cargo build**: ${build_result === 'success' ? '✅ Passed' : '❌ Failed (see action for more information.)'}\n`;
-            message += `- **cargo test**: ${test_result === 'success' ? '✅ Passed' : '❌ Failed (see action for more information.)'}\n`;
+          let message = `### Build and Test Results\n`;
+          message += `- **cargo build**: ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+          message += `- **cargo test**: ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: message
-            });
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
