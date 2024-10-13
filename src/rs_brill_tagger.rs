@@ -29,8 +29,8 @@ fn tag_sentence(sentence: &str) -> bool {
     println!("sentence to tag: {:?}", sentence_to_tag);
 
     // Apply lexical rules.
-    //println!("applying lexical rules\n");
-    //apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset);
+    println!("applying lexical rules\n");
+    apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping);
 
     // Apply contextual rules.
     println!("applying contextual rules:\n");
@@ -51,10 +51,13 @@ fn tag_sentence(sentence: &str) -> bool {
 
 
 /// Apply lexical rules to a sentence `sentence_to_tag`
-fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>) {
-    for (index, (_, _)) in enumerate(sentence_to_tag.clone()) {
+fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>, possible_tags: &Vec<(String, Vec<Wordclass>)>, wc_mapping: &WordclassMap) {
+    for (index, (word, _)) in enumerate(sentence_to_tag.clone()) {
         for rule in lexical_ruleset {
-            match lexical_rule_apply(sentence_to_tag, index as i32, rule) {
+
+            if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) {continue;}
+
+            match lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping) {
                 Some(true) => {
                     println!("RuleLexical (word {:?} -> {} if {} passes with parameters {:?})", &sentence_to_tag.get(index), rule.target_tag, rule.ruleset_id, rule.parameters);
                 }

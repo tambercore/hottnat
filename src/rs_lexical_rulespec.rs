@@ -407,8 +407,7 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
 
 
 /// Applies a given lexical rule.
-pub fn lexical_rule_apply(sentence: &mut Vec<(String, Wordclass)>, current_index: i32, rule: &LexicalRulespec) -> Option<bool> {
-    let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+pub fn lexical_rule_apply(sentence: &mut Vec<(String, Wordclass)>, current_index: i32, rule: &LexicalRulespec, wc_mapping: &WordclassMap) -> Option<bool> {
 
     let uindex: usize = current_index as usize;
 
@@ -426,6 +425,7 @@ pub fn lexical_rule_apply(sentence: &mut Vec<(String, Wordclass)>, current_index
 
 #[test]
 fn test_lexical_rule_apply() {
+    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
 
     let mut sentence = vec![
@@ -443,7 +443,7 @@ fn test_lexical_rule_apply() {
         parameters: vec![String::from("JJ"), "ick".parse().unwrap()],
     };
 
-    assert!(lexical_rule_apply(&mut sentence, 1, &rule_fhassuf).unwrap());
+    assert!(lexical_rule_apply(&mut sentence, 1, &rule_fhassuf, &wc_mapping).unwrap());
 
     println!("sentence after: {:?}", sentence);
 
