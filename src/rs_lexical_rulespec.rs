@@ -427,21 +427,25 @@ pub fn lexical_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: 
 #[test]
 fn test_lexical_rule_apply() {
 
-    let mut sentence_untagged = vec![
-        ("The", Wordclass::ANY),
-        ("quick", Wordclass::ANY),
-        ("brown", Wordclass::ANY),
-        ("lazy", Wordclass::ANY),
-        ("dog", Wordclass::ANY),
+
+    let mut sentence = vec![
+        ("The", Wordclass::DT),
+        ("quick", Wordclass::JJ),
+        ("brown", Wordclass::JJ),
+        ("fox", Wordclass::NN),
     ];
 
-    let rule_hassuf = LexicalRulespec {
-        ruleset_id: LexicalRuleID::HASSUF,
+    println!("sentence before: {:?}", sentence);
+
+    let rule_fhassuf = LexicalRulespec {
+        ruleset_id: LexicalRuleID::FHASSUF,
         target_tag: Wordclass::JJ,
-        parameters: vec![String::from("''"), "ick".parse().unwrap()],
+        parameters: vec![String::from("JJ"), "ick".parse().unwrap()],
     };
 
-    assert!(lexical_rule_apply(&mut sentence_untagged, 1, rule_hassuf).unwrap());
+    assert!(lexical_rule_apply(&mut sentence, 1, rule_fhassuf).unwrap());
+
+    println!("sentence after: {:?}", sentence);
 
 
 }
