@@ -4,6 +4,7 @@ use crate::rs_contextual_ruleset::parse_contextual_ruleset;
 use crate::rs_contextual_rulespec::{contextual_rule_apply, ContextualRulespec};
 use crate::rs_wordclass::Wordclass;
 use crate::{initialize_tagger, WordclassMap};
+use crate::rs_contractions::find_contractions;
 
 fn tag_sentence(sentence: &str) {
     //let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
@@ -13,11 +14,12 @@ fn tag_sentence(sentence: &str) {
 
     println!("sentence: {}\n", sentence);
 
+    let tokenised_sentence: Vec<String> = sentence.split_whitespace().map(|word|find_contractions(String::from(word)).unwrap()).flatten().collect();
+    println!("tokenised sentence: {:?}", tokenised_sentence);
+
     // Match each word with its list of possible tags
-    let words_to_tags: Vec<(&str, Vec<Wordclass>)> = sentence
-        .split_whitespace()
-        .enumerate()
-        .map(|(_, word)| (word, wc_mapping.get(word).ok_or(format!("Word not in lexicon: {}", word)).unwrap().to_owned()))
+    let words_to_tags: Vec<(&str, Vec<Wordclass>)> = tokenised_sentence.iter()
+        .map(|(word)| (word.as_str(), wc_mapping.get(word.as_str()).ok_or(format!("Word not in lexicon: {}", word)).unwrap().to_owned()))
         .collect();
 
     println!("possible tags: {:?}\n", words_to_tags);
@@ -74,6 +76,6 @@ fn tag_sentence(sentence: &str) {
 
 #[test]
 fn test_tag_sentence() {
-    tag_sentence("It is now some years since I detected how many were the false
+    tag_sentence("it's now some years since I detected how many were the false
 beliefs that I had from my earliest youth admitted as true");
 }
