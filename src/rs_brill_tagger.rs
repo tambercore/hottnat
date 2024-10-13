@@ -49,6 +49,7 @@ fn tag_sentence(sentence: &str) -> bool {
 
 }
 
+
 /// Apply lexical rules to a sentence `sentence_to_tag`
 fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>) {
     for (index, (_, _)) in enumerate(sentence_to_tag.clone()) {
@@ -74,11 +75,8 @@ fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possib
             match valid_rules {
                 Some(_valid_rules) => {
                     for rule in _valid_rules {
-                        let possible_tags_for_word =     possible_tags.iter()
-                            .find(|(first, _)| *first == word) // Find the tuple where the first element matches `key`
-                            .map(|(_, second)| second).unwrap(); // Map to the second element
 
-                        if(!possible_tags_for_word.contains(&rule.target_tag)){continue;}
+                        if !is_tag_contained_in_word_possible_tags(possible_tags, &word, &rule.target_tag) {continue;}
 
                         match contextual_rule_apply(sentence_to_tag, index as i32, rule.clone()) {
                             Some(true) => {
@@ -137,6 +135,14 @@ fn retrieve_sentence_to_tag(sentence: Vec<(String, Vec<Wordclass>)>) -> Vec<(Str
         .filter_map(|(word, tags)| tags.first().map(|first_tag| (word.to_owned(), first_tag.clone()))).collect()
 }
 
+/// Function to check if `possible_tag`s of a given `word` contain `target_tag`.
+fn is_tag_contained_in_word_possible_tags(possible_tags: &Vec<(String, Vec<Wordclass>)>, word: &String, target_tag: &Wordclass) -> bool {
+    let possible_tags_for_word =     possible_tags.iter()
+        .find(|(first, _)| first == word) // Find the tuple where the first element matches `key`
+        .map(|(_, second)| second).unwrap(); // Map to the second element
+
+    possible_tags_for_word.contains(target_tag)
+}
 #[test]
 fn test_tag_sentence() {
     assert!(tag_sentence("i want to rock and roll every night"));
