@@ -78,4 +78,8 @@ fn test_expand_contraction() {
     // Test expansion of "chocolate" (it shouldn't expand so should just return ['chocolate'].
     let result = find_contractions("chocolate".to_string());
     assert_eq!(result, Ok(vec!["chocolate".to_string()]));
+
+    // Ensuring `Chocolate` remains capitalised on output.
+    let result = find_contractions("Chocolate".to_string());
+    assert_eq!(result, Ok(vec!["Chocolate".to_string()]));
 }
