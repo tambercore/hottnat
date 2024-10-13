@@ -4,11 +4,13 @@ use serde::{Deserialize};
 use serde_json;
 use std::io;
 
+/// Struct used to help parse contractions in `load_contractions`.
 #[derive(Deserialize, Debug)]
 struct Contractions {
     #[serde(flatten)]
     contractions: HashMap<String, Vec<String>>,
 }
+
 
 /// Function to load `data/contractions.json` as a hashmap of contractions to their expansions.
 fn load_contractions() -> Result<HashMap<String, Vec<String>>, io::Error> {
@@ -17,10 +19,12 @@ fn load_contractions() -> Result<HashMap<String, Vec<String>>, io::Error> {
     Ok(contractions.contractions)
 }
 
+
 /// Function to expand a contraction `input` according to the `contractions_map`.
 fn expand_contraction(input: String, contractions_map: &HashMap<String, Vec<String>>) -> Option<Vec<String>> {
     contractions_map.get(&input).map(|expansion| expansion.clone())
 }
+
 
 /// Function to find contractions for a given `input`
 fn find_contractions(input: String) -> Result<Vec<String>, String> {
@@ -30,7 +34,13 @@ fn find_contractions(input: String) -> Result<Vec<String>, String> {
     let mut result: Vec<String> = Vec::new();
     if let Some(expansion) = expand_contraction(input.clone(), &contractions_map) {
         match expansion.get(0) {
-            Some(first_expansion) => result.push(first_expansion.to_string()),  // Convert &str to String
+            Some(first_expansion) => {
+                result = first_expansion
+                    .to_string()
+                    .split_whitespace()
+                    .map(|s| s.to_string())  // Convert each &str to String
+                    .collect();                                          // Collect the results into a Vec<String>
+            }
             None => return Err("Empty contraction vector.".to_string()),  // Error if empty
         }
     }
@@ -40,14 +50,18 @@ fn find_contractions(input: String) -> Result<Vec<String>, String> {
 }
 
 
-pub fn test_contractions() {
-    let input = "you're";
-    match find_contractions(input.to_string()) {
-        Ok(expansions) => {
-            for contraction in expansions {
-                println!("{}", contraction); // Print each contraction
-            }
-        }
-        Err(e) => println!("Error: {}", e), // Print the error if any
-    }
+/// Test that the `expand_contraction` function correct expands out contractions.
+#[test]
+fn test_expand_contraction() {
+    // Test expansion of "you're" to "you" and "are".
+    let result = find_contractions("you're".to_string());
+    assert_eq!(result, Ok(vec!["you".to_string(), "are".to_string()]));
+
+    // Test expansion of "it's" to "it" and "is".
+    let result = find_contractions("it's".to_string());
+    assert_eq!(result, Ok(vec!["it".to_string(), "is".to_string()]));
+
+    // Test expansion of "chocolate" (it shouldn't expand so should just return ['chocolate'].
+    let result = find_contractions("chocolate".to_string());
+    assert_eq!(result, Ok(vec!["chocolate".to_string()]));
 }
