@@ -36,21 +36,23 @@ jobs:
       # Post comment on the pull request with build and test results
       - name: Post comment on PR
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         env:
           BUILD_OUTCOME: ${{ steps.build_step.outcome }}
           TEST_OUTCOME: ${{ steps.test_step.outcome }}
-        script: |
-          const buildOutcome = process.env.BUILD_OUTCOME;
-          const testOutcome = process.env.TEST_OUTCOME;
-
-          let message = `### Build and Test Results\n`;
-          message += `- **cargo build**: ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
-          message += `- **cargo test**: ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
-
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: message
-          });
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const buildOutcome = process.env.BUILD_OUTCOME;
+            const testOutcome = process.env.TEST_OUTCOME;
+  
+            let message = `### Build and Test Results\n`;
+            message += `- **cargo build**: ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            message += `- **cargo test**: ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+  
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
