@@ -1,0 +1,59 @@
+name: Production Test & Build Checks
+
+# Trigger the workflow on push to main and on pull requests
+on:
+  pull_request:
+    branches:
+      - production
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Install Rust toolchain
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: clippy
+
+      # Build the project
+      - name: Run cargo build
+        id: build_step
+        run: cargo build --verbose
+
+      # Run tests
+      - name: Run cargo test
+        id: test_step
+        run: cargo test --verbose
+
+      # Post comment on the pull request with build and test results
+      - name: Post comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          BUILD_OUTCOME: ${{ steps.build_step.outcome }}
+          TEST_OUTCOME: ${{ steps.test_step.outcome }}
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const buildOutcome = process.env.BUILD_OUTCOME;
+            const testOutcome = process.env.TEST_OUTCOME;
+            
+            let message = `##### Test Workflow Results\n`;
+            message += `Hello 👋, it seems you have summoned me (🤖) by creating a pull-request. I tried to build and test the [hottnat](https://github.com/tambercore/hottnat) rust project (🦀), here are the [github action](https://github.com/tambercore/hottnat/actions) results.\n`;
+            message += `- **cargo build**: ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            message += `- **cargo test**: ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
