@@ -13,7 +13,6 @@ use std::io::{self, Error, Write};
 use rs_wordclass::*;
 use rs_contextual_rulespec::*;
 use rs_contextual_ruleset::*;
-use rs_contractions::*;
 
 type WordclassMap = HashMap<String, Vec<Wordclass>>;
 
@@ -60,7 +59,6 @@ fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
 
 
 fn main() -> io::Result<()> {
-    test_contractions();
 
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
     let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
