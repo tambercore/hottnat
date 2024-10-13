@@ -46,10 +46,12 @@ jobs:
             const buildOutcome = process.env.BUILD_OUTCOME;
             const testOutcome = process.env.TEST_OUTCOME;
             
-            let message = `##### Test Workflow Results\n`;
-            message += `Hello 👋, it seems you have summoned me (🤖) by creating a pull-request. I tried to build and test the [hottnat](https://github.com/tambercore/hottnat) rust project (🦀), here are the [github action](https://github.com/tambercore/hottnat/actions) results.\n`;
-            message += `- **cargo build**: ${buildOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
-            message += `- **cargo test**: ${testOutcome === 'success' ? '✅ Passed' : '❌ Failed'}\n`;
+            let message = `##### Test Workflow Results `; 
+            message += `${buildOutcome === 'success' && testOutcome === 'success' ? '(Passed ✅)' : '(Failed ❌)'} \n`;
+            message += `Greetings mere humanoid, it seems you have summoned me by creating a pull request. I tried to build and test the [hottnat](https://github.com/tambercore/hottnat) rust project, here are the [github action](https://github.com/tambercore/hottnat/actions) results. 🤖\n`;
+            message += `- \`cargo build\` ${buildOutcome === 'success' ? '✅' : '❌'}\n`;
+            message += `- \`cargo test\` ${testOutcome === 'success' ? '✅' : '❌'}\n`;
+
             
             github.rest.issues.createComment({
               issue_number: context.issue.number,
