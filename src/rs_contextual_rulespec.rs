@@ -445,7 +445,7 @@ fn test_contextual_rule() {
         println!("{} {}", w, c);
     }
 
-    contextual_rule_apply(sentence.as_mut(), 2, rule);
+    contextual_rule_apply(sentence.as_mut(), 2, rule, );
 
     for (w, c) in sentence {
         println!("{} {}", w, c);

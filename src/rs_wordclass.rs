@@ -130,6 +130,7 @@ pub fn map_pos_tag(tag: &str) -> Result<Wordclass, Error> {
         "WRB" => Ok(Wordclass::WRB),
         ":" => Ok(Wordclass::ANY),
         "''" => Ok(Wordclass::ANY),
+        tag if tag.contains("|") => Ok(Wordclass::ANY),
         _ => Err(Error::new(ErrorKind::InvalidData, format!("Invalid POS Tag Identifier: {}", tag))),
     }
 }
