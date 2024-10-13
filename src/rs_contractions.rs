@@ -32,7 +32,7 @@ fn find_contractions(input: String) -> Result<Vec<String>, String> {
 
     // Map the `input` to its corresponding contraction
     let mut result: Vec<String> = Vec::new();
-    if let Some(expansion) = expand_contraction(input.clone(), &contractions_map) {
+    if let Some(expansion) = expand_contraction(input.clone().to_lowercase(), &contractions_map) {
         match expansion.get(0) {
             Some(first_expansion) => {
                 result = first_expansion
@@ -40,6 +40,14 @@ fn find_contractions(input: String) -> Result<Vec<String>, String> {
                     .split_whitespace()
                     .map(|s| s.to_string())  // Convert each &str to String
                     .collect();                                          // Collect the results into a Vec<String>
+
+                let mut output = input.clone();
+                if let Some(first_char) = output.chars().next() {
+                    if first_char.is_uppercase() {
+                        // Access the first element of result mutably using indexing, not `get()`
+                        result[0].replace_range(0..first_char.len_utf8(), &first_char.to_string().as_str());
+                    }
+                } else { return Err(String::from("Input is an empty string.")); }
             }
             None => return Err("Empty contraction vector.".to_string()),  // Error if empty
         }
@@ -61,7 +69,15 @@ fn test_expand_contraction() {
     let result = find_contractions("it's".to_string());
     assert_eq!(result, Ok(vec!["it".to_string(), "is".to_string()]));
 
+    // Test expansion of "It's" to "it" and "is".
+    let result = find_contractions("It's".to_string());
+    assert_eq!(result, Ok(vec!["It".to_string(), "is".to_string()]));
+
     // Test expansion of "chocolate" (it shouldn't expand so should just return ['chocolate'].
     let result = find_contractions("chocolate".to_string());
     assert_eq!(result, Ok(vec!["chocolate".to_string()]));
+
+    // Ensuring `Chocolate` remains capitalised on output.
+    let result = find_contractions("Chocolate".to_string());
+    assert_eq!(result, Ok(vec!["Chocolate".to_string()]));
 }
