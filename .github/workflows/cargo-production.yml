@@ -7,6 +7,11 @@ on:
       - production
 
 jobs:
+  permissions:
+    contents: read
+    pull-requests: write
+    id-token: write
+
   build_and_test:
     runs-on: ubuntu-latest
 
