@@ -1,8 +1,11 @@
+use std::collections::HashMap;
 use crate::rs_wordclass::{map_pos_tag, Wordclass};
 use crate::WordclassMap;
 use crate::initialize_tagger;
 use crate::rs_lex_rulespec_id::{LexicalRuleID, LexicalRulespec};
 use itertools::{enumerate, Itertools};
+use crate::rs_contextual_ruleset::parse_contextual_ruleset;
+use crate::rs_contextual_rulespec::{contextual_rule_holds, ContextualRulespec};
 use crate::rs_lexical_ruleset::parse_lexical_ruleset;
 
 /// Function to check if the word at `current_index` has suffix `suffix` and is not yet tagged.
@@ -427,9 +430,13 @@ pub fn lexical_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: 
 #[test]
 fn test_lexical_rule_apply_on_ruleset() {
     let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
+    let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
+
     let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
     let sentence = "The quick brown fox";
+
+    println!("sentence: {}\n", sentence);
 
     // Match each word with its list of possible tags
     let words_to_tags: Vec<(&str, Vec<Wordclass>)> = sentence
@@ -437,6 +444,8 @@ fn test_lexical_rule_apply_on_ruleset() {
         .enumerate()
         .map(|(_, word)| (word, wc_mapping.get(word).unwrap().to_owned()))
         .collect();
+
+    println!("possible tags: {:?}\n", words_to_tags);
 
     // Extract the word-tag possibilities into a vector of vectors
     let tag_combinations: Vec<Vec<(&str, Wordclass)>> = words_to_tags
@@ -447,17 +456,34 @@ fn test_lexical_rule_apply_on_ruleset() {
         .multi_cartesian_product()
         .collect();
 
-    for mut sentence in tag_combinations {
-        for (index, (word, tag)) in enumerate(sentence.clone()) {
+    println!("valid lexical rules:\n");
+
+    for mut sentence in &tag_combinations {
+        for (index, (_, _)) in enumerate(sentence.clone()) {
             for rule in &lexical_ruleset {
                 match lexical_rule_holds(&mut sentence.clone(), index as i32, rule, &wc_mapping) {
                     None => {}
                     Some(false) => {}
-                    Some(true) => {}
+                    Some(true) => {println!("RuleLexical (word {} changes {} -> {} if {} passes with parameters {:?})", sentence.get((index) as usize).unwrap().0, sentence.get((index) as usize).unwrap().1, rule.target_tag, rule.ruleset_id, rule.parameters) }
                 }
             }
         }
     }
+
+    println!("valid contextual rules:\n");
+    for mut sentence in &tag_combinations {
+        for (index, (_, tag)) in enumerate(sentence.clone()) {
+            let valid_rules = contextual_ruleset.get(&tag).unwrap();
+            for rule in valid_rules {
+                match contextual_rule_holds(sentence.clone(), index as i32, rule.clone()) {
+                    None => {}
+                    Some(false) => {}
+                    Some(true) => {println!("RuleContextual (word {} changes {} -> {} if {} passes with parameters {:?})", sentence.get((index) as usize).unwrap().0, sentence.get((index) as usize).unwrap().1, rule.target_tag, rule.ruleset_id, rule.parameters) }
+                }
+            }
+        }
+    }
+
 
 
     /*for (word, tags) in words_to_tags {
