@@ -1,0 +1,32 @@
+name: Production Test & Build Checks
+
+# Trigger the workflow on push to main and on pull requests
+on:
+  pull_request:
+    branches:
+      - production
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Install Rust toolchain
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          components: clippy
+
+      # Build the project
+      - name: Run cargo build
+        run: cargo build --verbose
+
+      # Run tests
+      - name: Run cargo test
+        run: cargo test --verbose
