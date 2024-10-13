@@ -30,3 +30,23 @@ jobs:
       # Run tests
       - name: Run cargo test
         run: cargo test --verbose
+
+      # Comment on the pull request with the result
+      - name: Post comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const build_result = steps.build_step.outcome;
+            const test_result = steps.test_step.outcome;
+
+            let message = `### Build and Test Results\n`;
+            message += `- **cargo build**: ${build_result === 'success' ? '✅ Passed' : '❌ Failed (see action for more information.)'}\n`;
+            message += `- **cargo test**: ${test_result === 'success' ? '✅ Passed' : '❌ Failed (see action for more information.)'}\n`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
