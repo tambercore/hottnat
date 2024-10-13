@@ -82,8 +82,11 @@ fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possib
 
         // check if each word in sentence_to_tag's corresponding tag is in its corresponding tag vector in words_to_tags
         let all_tags_valid = sentence_to_tag.iter().all(|(word, tag)| {
-            if let Some(possible_tags) = possible_tags.iter().find(|(w, _)| *w == *word) {
-                possible_tags.1.contains(tag)
+            if let Some(possible_tags) = possible_tags.iter().find(|(w, _)| w == word)  {
+                // The assigned tag must be in the word's possible tags.
+                // If the word can be ANY, then any tag is valid.
+                // The tag CANNOT be ANY (this means it is unassigned).
+                (possible_tags.1.contains(tag) || possible_tags.1.contains(&Wordclass::ANY)) && *tag != Wordclass::ANY
             } else {
                 false
             }
@@ -100,7 +103,7 @@ fn tokenize_sentence(sentence: &str) -> Vec<String> {
         .collect()
 }
 
-/// Given a tokenized `sentence` and mapping `wc_mapping`, retrieve the possible tags for each word.
+/// Function to: given a tokenized `sentence` and mapping `wc_mapping`, retrieve the possible tags for each word.
 fn get_possible_tags(sentence: Vec<String>, wc_mapping: &mut WordclassMap) -> Vec<(String, Vec<Wordclass>)> {
     sentence.iter()
         .map(|word| (word.as_str().to_owned(), wc_mapping.entry(word.as_str().parse().unwrap()).or_insert(vec![Wordclass::ANY]).to_owned()))
@@ -116,5 +119,5 @@ fn retrieve_sentence_to_tag(sentence: Vec<(String, Vec<Wordclass>)>) -> Vec<(Str
 
 #[test]
 fn test_tag_sentence() {
-    tag_sentence("it's asjdlh");
+    tag_sentence("i wanna rock and roll all night and party every day alshjjhsb");
 }
