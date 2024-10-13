@@ -450,7 +450,7 @@ fn test_lexical_rule_apply() {
 
 }
 
-
+/// Test to check the appears_to_left function correctly returns true as expected.
 #[test]
 fn test_appears_to_left_found() {
     let sentence = vec![
