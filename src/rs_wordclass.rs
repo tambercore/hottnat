@@ -89,7 +89,7 @@ impl fmt::Display for Wordclass {
     }
 }
 
-
+/// Function to map strings representing POS tags to their enum representation.
 pub fn map_pos_tag(tag: &str) -> Result<Wordclass, Error> {
     match tag {
         "CC" => Ok(Wordclass::CC),
