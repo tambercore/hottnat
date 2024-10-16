@@ -54,8 +54,8 @@ pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
     let mut file = File::open(conllu_filepath).unwrap();
 
     // First pass: Count the total number of sentences
-    let total_sentences = rs_conllu::parse_file(file)  // Clone the reader so it can be used in the second pass
-        .count();  // Count the sentences without consuming them
+    let total_sentences = rs_conllu::parse_file(file)
+        .count();
 
     // Reopen the file for the second pass to process the sentences
     let file = File::open(conllu_filepath).unwrap();  // Reopen the file
