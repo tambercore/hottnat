@@ -423,7 +423,7 @@ pub fn lexical_rule_apply(sentence: &mut Vec<(String, Wordclass)>, current_index
 
 #[test]
 fn test_lexical_rule_apply() {
-    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+    let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
 
     let mut sentence = vec![

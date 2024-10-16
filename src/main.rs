@@ -12,7 +12,7 @@ mod rs_conllu_parser;
 
 use std::collections::HashMap;
 use std::fs;
-use std::io::{self, Error, Write};
+use std::io::{self, Write};
 use rs_wordclass::*;
 use rs_contextual_rulespec::*;
 use rs_contextual_ruleset::*;

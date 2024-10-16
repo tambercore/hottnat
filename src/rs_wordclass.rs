@@ -1,5 +1,4 @@
 use std::fmt;
-use std::io::{Error, ErrorKind};
 
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Wordclass {

@@ -1,6 +1,6 @@
-use std::fs::File;
+//use std::fs::File;
 use crate::rs_wordclass::Wordclass;
-use crate::rs_conllu_parser::{parse_conllu_file, Token}; // Import your custom parser
+use crate::rs_conllu_parser::parse_conllu_file; // Import your custom parser
 use crate::rs_brill_tagger::tag_sentence;
 
 /// Function to map a `Wordclass` POS tag to a `rs_conllu::UPOS` POS tag (sacrificing variety).
@@ -49,7 +49,7 @@ pub fn wordclass_to_upos(wordclass: &Wordclass) -> crate::rs_conllu_parser::UPOS
 /// Function to benchmark the POS tagger using a `.conllu` file (give the path as a parameter).
 pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
     // Open the file and create a buffered reader
-    let file = File::open(conllu_filepath).expect("Unable to open file");
+    // let file = File::open(conllu_filepath).expect("Unable to open file");
 
     // Parse the CoNLL-U file using your custom parser
     let sentences = parse_conllu_file(conllu_filepath).expect("Failed to parse file");

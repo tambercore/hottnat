@@ -4,7 +4,6 @@ use std::io::{Error, ErrorKind};
 use crate::rs_rulespec_id::*;
 use crate::rs_contextual_rulespec::*;
 use std::collections::HashMap;
-use std::io;
 
 /// ...
 pub fn parse_contextual_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<ContextualRulespec>>, Error>
