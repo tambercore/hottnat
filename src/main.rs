@@ -6,13 +6,16 @@ mod rs_lex_rulespec_id;
 mod rs_lexical_ruleset;
 mod rs_lexical_rulespec;
 mod rs_contractions;
+mod rs_benchmark;
 
 use std::collections::HashMap;
 use std::fs;
+use std::fs::File;
 use std::io::{self, Error, Write};
 use rs_wordclass::*;
 use rs_contextual_rulespec::*;
 use rs_contextual_ruleset::*;
+use rs_conllu::{parse_sentence, TokenID};
 
 type WordclassMap = HashMap<String, Vec<Wordclass>>;
 
@@ -59,6 +62,15 @@ fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
 
 
 fn main() -> io::Result<()> {
+
+    let file = File::open("data/en_ewt-ud-test.conllu").unwrap();
+    let doc = rs_conllu::parse_file(file);
+
+    for sentence in doc {
+        for token in sentence.unwrap() {
+            println!("{}, {:?}", token.form, token.upos);
+        }
+    }
 
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
     let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
