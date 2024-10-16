@@ -200,8 +200,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => { Option::from(previous_tag(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
+                Some(_wordclass) => { Option::from(previous_tag(sentence, current_index, _wordclass)) }
+                None => { Option::from(false) }
             }
         },
 
@@ -214,8 +214,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => { Option::from(previous_one_or_two_tag(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
+                Some(_wordclass) => { Option::from(previous_one_or_two_tag(sentence, current_index, _wordclass)) }
+                None => { Option::from(false) }
             }
         },
 
@@ -223,8 +223,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => { Option::from(previous_one_or_two_or_three_tag(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
+                Some(_wordclass) => { Option::from(previous_one_or_two_or_three_tag(sentence, current_index, _wordclass)) }
+                None => { Option::from(false) }
             }
         },
 
@@ -232,8 +232,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => Option::from(next_one_or_two_or_three_tag(sentence, current_index, _wordclass)),
-                Err(_)         => Option::from(false),
+                Some(_wordclass) => Option::from(next_one_or_two_or_three_tag(sentence, current_index, _wordclass)),
+                None         => Option::from(false),
             }
         },
 
@@ -242,8 +242,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let type_parameter = rule.parameters.get(1)?;
             let type_wordclass = map_pos_tag(type_parameter);
             match type_wordclass {
-                Ok(_wordclass) => { Option::from(word_and_tag_2_after(sentence, current_index, word_parameter, _wordclass)) }
-                Err(_)         => Option::from(false),
+                Some(_wordclass) => { Option::from(word_and_tag_2_after(sentence, current_index, word_parameter, _wordclass)) }
+                None         => Option::from(false),
             }
         },
 
@@ -262,8 +262,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => { Option::from(next_one_or_two_tag(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
+                Some(_wordclass) => { Option::from(next_one_or_two_tag(sentence, current_index, _wordclass)) }
+                None => { Option::from(false) }
             }
         },
 
@@ -271,8 +271,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => { Option::from(next_tag(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
+                Some(_wordclass) => { Option::from(next_tag(sentence, current_index, _wordclass)) }
+                None => { Option::from(false) }
             }
         },
 
@@ -280,8 +280,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => { Option::from(prev_two_tag(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
+                Some(_wordclass) => { Option::from(prev_two_tag(sentence, current_index, _wordclass)) }
+                None => { Option::from(false) }
             }
         },
 
@@ -295,8 +295,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let type_parameter = rule.parameters.get(1)?;
             let type_wordclass = map_pos_tag(type_parameter);
             match type_wordclass {
-                Ok(_wordclass) => { Option::from(word_and_next_tag(sentence, current_index, word_parameter, _wordclass)) }
-                Err(_)         => Option::from(false),
+                Some(_wordclass) => { Option::from(word_and_next_tag(sentence, current_index, word_parameter, _wordclass)) }
+                None        => Option::from(false),
             }
         },
 
@@ -306,7 +306,7 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let type_wordclass1 = map_pos_tag(type_parameter1);
             let type_wordclass2 = map_pos_tag(type_parameter2);
             match (type_wordclass1, type_wordclass2) {
-                (Ok(wordclass1), Ok(wordclass2)) => Option::from(surrounding_tags(sentence, current_index, wordclass1, wordclass2)),
+                (Some(wordclass1), Some(wordclass2)) => Option::from(surrounding_tags(sentence, current_index, wordclass1, wordclass2)),
                 _ => Option::from(false),
             }
         },
@@ -316,8 +316,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let type_parameter = rule.parameters.get(1)?;
             let type_wordclass = map_pos_tag(type_parameter);
             match type_wordclass {
-                Ok(_wordclass) => { Option::from(word_and_two_tag_before(sentence, current_index, word_parameter, _wordclass)) }
-                Err(_)         => Option::from(false),
+                Some(_wordclass) => { Option::from(word_and_two_tag_before(sentence, current_index, word_parameter, _wordclass)) }
+                None        => Option::from(false),
             }
         },
 
@@ -334,7 +334,7 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let type_wordclass1 = map_pos_tag(type_parameter1);
             let type_wordclass2 = map_pos_tag(type_parameter2);
             match (type_wordclass1, type_wordclass2) {
-                (Ok(wordclass1), Ok(wordclass2)) => Option::from(prev_bigram(sentence, current_index, wordclass1, wordclass2)),
+                (Some(wordclass1), Some(wordclass2)) => Option::from(prev_bigram(sentence, current_index, wordclass1, wordclass2)),
                 _ => Option::from(false),
             }
         },
@@ -349,8 +349,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let type_parameter = rule.parameters.get(1)?;
             let type_wordclass = map_pos_tag(type_parameter);
             match type_wordclass {
-                Ok(_wordclass) => { Option::from(word_and_previous_tag(sentence, current_index, word_parameter, _wordclass)) }
-                Err(_)         => Option::from(false),
+                Some(_wordclass) => { Option::from(word_and_previous_tag(sentence, current_index, word_parameter, _wordclass)) }
+                None         => Option::from(false),
             }
         },
 
@@ -360,7 +360,7 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let type_wordclass1 = map_pos_tag(type_parameter1);
             let type_wordclass2 = map_pos_tag(type_parameter2);
             match (type_wordclass1, type_wordclass2) {
-                (Ok(wordclass1), Ok(wordclass2)) => Option::from(next_bigram(sentence, current_index, wordclass1, wordclass2)),
+                (Some(wordclass1), Some(wordclass2)) => Option::from(next_bigram(sentence, current_index, wordclass1, wordclass2)),
                 _ => Option::from(false),
             }
         },
@@ -369,8 +369,8 @@ pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: 
             let param_original = rule.parameters.get(0)?;
             let param_wordclass = map_pos_tag(param_original);
             match param_wordclass {
-                Ok(_wordclass) => { Option::from(next_two_tags(sentence, current_index, _wordclass)) }
-                Err(_) => { Option::from(false) }
+                Some(_wordclass) => { Option::from(next_two_tags(sentence, current_index, _wordclass)) }
+                None => { Option::from(false) }
             }
         },
 

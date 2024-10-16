@@ -1,6 +1,7 @@
 use std::collections::{HashSet};
 use std::fs::read_to_string;
 use std::io;
+use std::io::Error;
 use crate::rs_lex_rulespec_id::{map_lexical_rule_id, LexicalRulespec};
 use crate::rs_wordclass::{map_pos_tag, Wordclass};
 
@@ -38,7 +39,9 @@ pub fn parse_lexical_ruleset(path: &str) -> Result<Vec<LexicalRulespec>, io::Err
         const TARGET_TAG_INSET: i8 = 2;
         let target_tag_index: usize = parts.len() - TARGET_TAG_INSET as usize;
         let target_tag: Wordclass = if let Some(target_tag_str) = parts.get(target_tag_index) {
-            map_pos_tag(target_tag_str)?
+            map_pos_tag(target_tag_str)
+                .ok_or_else(|| Error::new(io::ErrorKind::InvalidInput, "invalid target tag"))?
+
         } else { return Err(io::Error::new(io::ErrorKind::InvalidData, "Target tag not found.")); };
 
         // Finally, any additional parameters are collected, before the structure is added to the vector.

@@ -20,7 +20,12 @@ pub fn tag_sentence(sentence: &str) -> Vec<(String, Wordclass)> {
     // Tokenise sentence, and map each word to its possible tags.
     let tokenised_sentence = tokenize_sentence(sentence);
     let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, &mut wc_mapping);
+
+    println!("words_to_tags: {:?}", words_to_tags.clone());
+
     let mut sentence_to_tag: Vec<(String, Wordclass)> = retrieve_sentence_to_tag(words_to_tags.clone());
+
+    println!("sentence to tag: {:?}", sentence_to_tag);
 
     // Apply lexical and contextual rules.
     apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping);
@@ -119,5 +124,5 @@ fn are_tags_valid(sentence: &Vec<(String, Wordclass)>, possible_tags: &Vec<(Stri
 #[test]
 fn test_tag_sentence() {
     // To do proper tests, need to know what the sentences should be tagged as!
-    tag_sentence("i want to rock and roll every night");
+    tag_sentence("The actual vote is a little confusing");
 }

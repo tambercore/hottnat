@@ -32,8 +32,8 @@ pub fn initialize_tagger(path: &str) -> Result<WordclassMap, io::Error>
     // Defining a small function to map a vector of strings to a vector of wordclass enumerations.
     // This function invokes the above `map_pos_tag` function on each element of the original vector.
     // E.g. the vector of strings: {"WP$", "VBZ"} would map to {`Wordclass::WPO`, `Wordlass::VBZ`}
-    fn process_tags(tags: Vec<String>) -> Result<Vec<Wordclass>, Error> {
-        tags.into_iter().map(|tag| map_pos_tag(&tag)).collect::<Result<Vec<Wordclass>, Error>>()
+    fn process_tags(tags: Vec<String>) -> Option<Vec<Wordclass>> {
+        tags.into_iter().map(|tag| map_pos_tag(&tag)).collect::<Option<Vec<Wordclass>>>()
     }
 
     // Here, a type `LineFunction` is declared, to process a row of the lexicon into the `WordclassMap`.
@@ -41,10 +41,10 @@ pub fn initialize_tagger(path: &str) -> Result<WordclassMap, io::Error>
     // E.g. the string 'beans NN' maps the word to its wordclasses ('beans NN' → 'beans': [Wordclass::NN]).
     type LineFunction = fn(&mut WordclassMap, Vec<&str>);
     let process_line: LineFunction = |tagger, parts| {
-        let string_vector: Result<Vec<Wordclass>, Error> = process_tags(parts[1..].iter().map(|&s| s.to_string()).collect::<Vec<String>>());
+        let string_vector: Option<Vec<Wordclass>> = process_tags(parts[1..].iter().map(|&s| s.to_string()).collect::<Vec<String>>());
         match string_vector {
-            Ok(wordclass_vector) => tagger.insert(parts[0].to_string(), wordclass_vector),
-            Err(_) => tagger.insert(parts[0].to_string(), Vec::new())
+            Some(wordclass_vector) => tagger.insert(parts[0].to_string(), wordclass_vector),
+            None => tagger.insert(parts[0].to_string(), Vec::new())
         };
     };
 

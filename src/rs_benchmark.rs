@@ -42,7 +42,6 @@ pub fn wordclass_to_upos(wordclass: &Wordclass) -> crate::rs_conllu_parser::UPOS
         Wordclass::WPR   => crate::rs_conllu_parser::UPOS::PRON,
         Wordclass::WPO   => crate::rs_conllu_parser::UPOS::PRON,
         Wordclass::WRB   => crate::rs_conllu_parser::UPOS::ADV,
-        Wordclass::OTHER => crate::rs_conllu_parser::UPOS::X,
         Wordclass::ANY   => crate::rs_conllu_parser::UPOS::X,
     }
 }
