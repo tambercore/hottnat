@@ -1,5 +1,27 @@
 use std::fmt;
 
+
+/*
+pub enum UPOS {
+    ADJ,      // Adjective
+    ADP,      // Adposition
+    ADV,      // Adverb
+    AUX,      // Auxiliary
+    CCONJ,    // Coordinating conjunction
+    DET,      // Determiner
+    INTJ,     // Interjection
+    NOUN,     // Noun
+    NUM,      // Numeral
+    PART,     // Particle
+    PRON,     // Pronoun
+    PROPN,    // Proper noun
+    PUNCT,    // Punctuation
+    SCONJ,    // Subordinating conjunction
+    SYM,      // Symbol
+    VERB,     // Verb
+    X,        // Other
+}
+ */
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Wordclass {
     CC,     // Coordinating conjunction
@@ -38,6 +60,7 @@ pub enum Wordclass {
     WPR,    // Wh-pronoun
     WPO,    // Possessive wh-pronoun
     WRB,    // Wh-adverb
+    PUNC,   // Punctuation
     ANY,    // Any, used in contextual rules.
 }
 
@@ -80,6 +103,7 @@ impl fmt::Display for Wordclass {
             Wordclass::WPR => "Wh-pronoun",
             Wordclass::WPO => "Possessive wh-pronoun",
             Wordclass::WRB => "Wh-adverb",
+            Wordclass::PUNC => "Punctuation",
             Wordclass::ANY => "Any!",
 
         };
@@ -126,6 +150,10 @@ pub fn map_pos_tag(tag: &str) -> Option<Wordclass> {
         "WP" => Some(Wordclass::WPR),
         "WP$" => Some(Wordclass::WPO),
         "WRB" => Some(Wordclass::WRB),
+        "." => Some(Wordclass::PUNC),
+        "," => Some(Wordclass::PUNC),
+        "!" => Some(Wordclass::PUNC),
+        ";" => Some(Wordclass::PUNC),
         tag if tag.contains("|") => Some(Wordclass::ANY),
         _ => None,
     }

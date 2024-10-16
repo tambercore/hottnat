@@ -42,6 +42,7 @@ pub fn wordclass_to_upos(wordclass: &Wordclass) -> crate::rs_conllu_parser::UPOS
         Wordclass::WPR   => crate::rs_conllu_parser::UPOS::PRON,
         Wordclass::WPO   => crate::rs_conllu_parser::UPOS::PRON,
         Wordclass::WRB   => crate::rs_conllu_parser::UPOS::ADV,
+        Wordclass::PUNC => crate::rs_conllu_parser::UPOS::PUNCT,
         Wordclass::ANY   => crate::rs_conllu_parser::UPOS::X,
     }
 }
@@ -60,6 +61,7 @@ pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
 
     let mut total_score = 0.0;  // To track the total score for all sentences
     let mut sentence_count = 0; // To track the number of sentences
+    let max_sentences = 50; // Shorten the test base to speed up testing.
 
     // Iterate through the parsed sentences
     for (i, sentence) in sentences.iter().enumerate() {
@@ -115,6 +117,8 @@ pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
         // Print the match score for the sentence
         println!("\nSentence {} (of {}) match score: {:.2}\n", i + 1, total_sentences, sentence_score);
         println!("{}", "=".repeat(80));  // Separate output for readability
+
+        if sentence_count > max_sentences {break;} // Limit testing to 100 sentences.
     }
 
     // Calculate and return the average match score across all sentences

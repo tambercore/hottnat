@@ -21,11 +21,8 @@ pub fn tag_sentence(sentence: &str) -> Vec<(String, Wordclass)> {
     let tokenised_sentence = tokenize_sentence(sentence);
     let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, &mut wc_mapping);
 
-    println!("words_to_tags: {:?}", words_to_tags.clone());
-
+    println!("possible tags: {:?}", words_to_tags);
     let mut sentence_to_tag: Vec<(String, Wordclass)> = retrieve_sentence_to_tag(words_to_tags.clone());
-
-    println!("sentence to tag: {:?}", sentence_to_tag);
 
     // Apply lexical and contextual rules.
     apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping);

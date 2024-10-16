@@ -42470,7 +42470,7 @@ composure NN
 a DT VB , VBN NNP FW JJ LS NN
 briefest JJS 
 Love NNP VBP NN VB
-Vahid NNP 
+Vahid NNP
 twelve-year-old JJ 
 strumming VBG 
 proctor NN 
