@@ -27,7 +27,7 @@ fn expand_contraction(input: String, contractions_map: &HashMap<String, Vec<Stri
 
 
 /// Function to find contractions for a given `input`
-fn find_contractions(input: String) -> Result<Vec<String>, String> {
+pub fn find_contractions(input: String) -> Result<Vec<String>, String> {
     let contractions_map = load_contractions().map_err(|e| format!("Error loading contractions: {}", e))?;
 
     // Map the `input` to its corresponding contraction

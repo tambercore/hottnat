@@ -4,7 +4,7 @@ use crate::rs_wordclass::{map_pos_tag, Wordclass};
 
 
 /// Function to check if the tag at index - 1 is equal to `tag` in a sentence.
-pub fn previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
+pub fn previous_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     match sentence.get((current_index - 1) as usize) {
         Some((_, ref _tag)) if _tag == &tag => true,
         _ => false,
@@ -13,7 +13,7 @@ pub fn previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: W
 
 
 /// Function to check if the tag at index - 1 is equal to `tag` in a sentence.
-pub fn next_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
+pub fn next_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     match sentence.get((current_index + 1) as usize) {
         Some((_, ref _tag)) if _tag == &tag => true,
         _ => false,
@@ -22,7 +22,7 @@ pub fn next_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordc
 
 
 /// Function to check if the word at index - 1 is equal to `word` in a sentence.
-pub fn previous_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str) -> bool {
+pub fn previous_word(sentence: Vec<(String, Wordclass)>, current_index: i32, word: &str) -> bool {
     match sentence.get((current_index - 1) as usize) {
         Some((_word, _)) if _word == &word => true,
         _ => false,
@@ -31,7 +31,7 @@ pub fn previous_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word:
 
 
 /// Function to check if the tag at index +1 or index +2 is equal to `tag` in a sentence.
-pub fn next_one_or_two_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
+pub fn next_one_or_two_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     (1..=2).any(|offset| {
         sentence.get((current_index + offset) as usize).map_or(false, |&(_, ref _tag)| _tag == &tag)
     })
@@ -39,7 +39,7 @@ pub fn next_one_or_two_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32,
 
 
 /// Function to check if the tag at index - 1 or index - 2 is equal to `tag` in a sentence.
-pub fn previous_one_or_two_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
+pub fn previous_one_or_two_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     (1..=2).any(|offset| {
         sentence.get((current_index - offset) as usize).map_or(false, |&(_, ref _tag)| _tag == &tag)
     })
@@ -47,7 +47,7 @@ pub fn previous_one_or_two_tag(sentence: Vec<(&str, Wordclass)>, current_index: 
 
 
 /// Function to check if the word at index - 1 or index - 2 or index - 3 is equal to `tag` in a sentence.
-pub fn previous_one_or_two_or_three_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
+pub fn previous_one_or_two_or_three_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     (1..=3).any(|offset| {
         sentence.get((current_index - offset) as usize).map_or(false, |&(_, ref _tag)| _tag == &tag)
     })
@@ -55,13 +55,13 @@ pub fn previous_one_or_two_or_three_tag(sentence: Vec<(&str, Wordclass)>, curren
 
 
 /// Function to check if the tag at index +1, +2 or +3 is equal to `tag` in a sentence.
-pub fn next_one_or_two_or_three_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
+pub fn next_one_or_two_or_three_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     sentence.iter().skip((current_index + 1) as usize).take(3).any(|(_, t)| *t == tag)
 }
 
 
 /// Function to check current word, and tag 2 words after.
-pub fn word_and_tag_2_after(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str, tag: Wordclass) -> bool {
+pub fn word_and_tag_2_after(sentence: Vec<(String, Wordclass)>, current_index: i32, word: &str, tag: Wordclass) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w, _)| w == &word) {
         sentence.get(current_index as usize + 2).map_or(false, |(_, t)| *t == tag)
     } else { false }
@@ -69,7 +69,7 @@ pub fn word_and_tag_2_after(sentence: Vec<(&str, Wordclass)>, current_index: i32
 
 
 /// Function to check current word, and word 2 words after.
-pub fn word_and_2_after(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_one: &str, word_two: &str) -> bool {
+pub fn word_and_2_after(sentence: Vec<(String, Wordclass)>, current_index: i32, word_one: &str, word_two: &str) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word_one) {
         sentence.get((current_index + 2) as usize).map_or(false, |(w2, _)| w2 == &word_two)
     } else { false }
@@ -77,15 +77,15 @@ pub fn word_and_2_after(sentence: Vec<(&str, Wordclass)>, current_index: i32, wo
 
 
 /// Function to check if the word at index - 1 or index - 2 is equal to `word` in a sentence.
-pub fn previous_one_or_two_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str) -> bool {
+pub fn previous_one_or_two_word(sentence: Vec<(String, Wordclass)>, current_index: i32, word: &str) -> bool {
     (1..=2).any(|offset| {
-        sentence.get((current_index - offset) as usize).map_or(false, |&(_word, _)| _word == word)
+        sentence.get((current_index - offset) as usize).map_or(false, |(_word, _)| _word == word)
     })
 }
 
 
 /// Function to check if the tag at index - 2 is equal to `tag` in a sentence.
-pub fn prev_two_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
+pub fn prev_two_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, tag: Wordclass) -> bool {
     match sentence.get((current_index - 2) as usize) {
         Some((_, ref _tag)) if _tag == &tag => true,
         _ => false,
@@ -94,7 +94,7 @@ pub fn prev_two_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag: W
 
 
 /// Function to check if the word at index + 1 is equal to `word` in a sentence.
-pub fn next_word (sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str) -> bool {
+pub fn next_word (sentence: Vec<(String, Wordclass)>, current_index: i32, word: &str) -> bool {
     match sentence.get((current_index - 1) as usize) {
         Some((_word, _)) if _word == &word => true,
         _ => false,
@@ -103,7 +103,7 @@ pub fn next_word (sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &s
 
 
 /// Function to check current word and tag of hte next word.
-pub fn word_and_next_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_one: &str, next_tag: Wordclass) -> bool {
+pub fn word_and_next_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, word_one: &str, next_tag: Wordclass) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word_one) {
         sentence.get(current_index as usize + 2).map_or(false, |(_, _tag)| _tag == &next_tag)
     } else { false }
@@ -111,7 +111,7 @@ pub fn word_and_next_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, w
 
 
 /// Function to check the surrounding tags of a word.
-pub fn surrounding_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, previous_tag: Wordclass, next_tag: Wordclass) -> bool {
+pub fn surrounding_tags(sentence: Vec<(String, Wordclass)>, current_index: i32, previous_tag: Wordclass, next_tag: Wordclass) -> bool {
     match sentence.get((current_index  - 1) as usize) {
         Some((_, ref _tag)) if _tag == &previous_tag => match sentence.get((current_index + 1) as usize) {
             Some((_, ref _tag)) if _tag == &next_tag => true,
@@ -123,7 +123,7 @@ pub fn surrounding_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, pr
 
 
 /// Function to check current word and tag of hte next word.
-pub fn word_and_two_tag_before(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str, tag: Wordclass) -> bool {
+pub fn word_and_two_tag_before(sentence: Vec<(String, Wordclass)>, current_index: i32, word: &str, tag: Wordclass) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word) {
         sentence.get(current_index as usize - 2).map_or(false, |(_, _tag)| _tag == &tag)
     } else { false }
@@ -132,7 +132,7 @@ pub fn word_and_two_tag_before(sentence: Vec<(&str, Wordclass)>, current_index: 
 
 
 /// Function to check a right-bigram.
-pub fn right_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_one: &str, word_two: &str) -> bool {
+pub fn right_bigram(sentence: Vec<(String, Wordclass)>, current_index: i32, word_one: &str, word_two: &str) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word_one) {
         sentence.get((current_index + 1) as usize).map_or(false, |(w2, _)| w2 == &word_two)
     } else { false }
@@ -141,7 +141,7 @@ pub fn right_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_o
 
 
 /// Function to check a left-bigram.
-pub fn left_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_one: &str, word_two: &str) -> bool {
+pub fn left_bigram(sentence: Vec<(String, Wordclass)>, current_index: i32, word_one: &str, word_two: &str) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word_one) {
         sentence.get((current_index - 1) as usize).map_or(false, |(w2, _)| w2 == &word_two)
     } else { false }
@@ -149,7 +149,7 @@ pub fn left_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, word_on
 
 
 /// Function to check previous bigram tags
-pub fn prev_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, class_one: Wordclass, class_two: Wordclass) -> bool {
+pub fn prev_bigram(sentence: Vec<(String, Wordclass)>, current_index: i32, class_one: Wordclass, class_two: Wordclass) -> bool {
     if sentence.get((current_index - 1) as usize).map_or(false, |(_, tag1)| tag1 == &class_one) {
         sentence.get((current_index - 2) as usize ).map_or(false, |(_, tag2)| tag2 == &class_two)
     } else { false }
@@ -158,7 +158,7 @@ pub fn prev_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, class_o
 
 
 /// Function to check the next bigram tags
-pub fn next_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, class_one: Wordclass, class_two: Wordclass) -> bool {
+pub fn next_bigram(sentence: Vec<(String, Wordclass)>, current_index: i32, class_one: Wordclass, class_two: Wordclass) -> bool {
     if sentence.get(current_index as usize + 1).map_or(false, |(_, tag1)| tag1 == &class_one) {
         sentence.get(current_index as usize + 2).map_or(false, |(_, tag2)| tag2 == &class_two)
     } else { false }
@@ -167,7 +167,7 @@ pub fn next_bigram(sentence: Vec<(&str, Wordclass)>, current_index: i32, class_o
 
 
 /// Function to check a left-bigram.
-pub fn current_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str) -> bool {
+pub fn current_word(sentence: Vec<(String, Wordclass)>, current_index: i32, word: &str) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word) { true }
     else { false }
 }
@@ -175,7 +175,7 @@ pub fn current_word(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: 
 
 
 /// Function to check word and previous tag
-pub fn word_and_previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i32, word: &str, tag: Wordclass) -> bool {
+pub fn word_and_previous_tag(sentence: Vec<(String, Wordclass)>, current_index: i32, word: &str, tag: Wordclass) -> bool {
     if sentence.get(current_index as usize).map_or(false, |(w1, _)| w1 == &word) {
         sentence.get(current_index as usize - 1).map_or(false, |(_, _tag)| _tag == &tag)
     } else { false }
@@ -184,7 +184,7 @@ pub fn word_and_previous_tag(sentence: Vec<(&str, Wordclass)>, current_index: i3
 
 
 /// Function to check word and previous tag
-pub fn next_two_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag1: Wordclass) -> bool {
+pub fn next_two_tags(sentence: Vec<(String, Wordclass)>, current_index: i32, tag1: Wordclass) -> bool {
     if sentence.get((current_index + 2) as usize).map_or(false, |(_, _tag1)| _tag1 == &tag1) { true }
     else { false }
 }
@@ -192,7 +192,7 @@ pub fn next_two_tags(sentence: Vec<(&str, Wordclass)>, current_index: i32, tag1:
 
 
 // Checks a given contextual rule.
-pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i32, rule: ContextualRulespec) -> Option<bool> {
+pub fn contextual_rule_holds(sentence: Vec<(String, Wordclass)>, current_index: i32, rule: ContextualRulespec) -> Option<bool> {
 
     match rule.ruleset_id {
 
@@ -385,7 +385,7 @@ pub fn contextual_rule_holds(sentence: Vec<(&str, Wordclass)>, current_index: i3
 
 
 
-pub fn contextual_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_index: i32, rule: ContextualRulespec) -> Option<bool> {
+pub fn contextual_rule_apply(sentence: &mut Vec<(String, Wordclass)>, current_index: i32, rule: ContextualRulespec) -> Option<bool> {
     // Check if Contextual Rule can be run
     let uindex: usize = current_index as usize;
     let check_pair = sentence.get(uindex)?;
@@ -397,7 +397,7 @@ pub fn contextual_rule_apply(sentence: &mut Vec<(&str, Wordclass)>, current_inde
     match contextual_rule_holds(sentence.to_owned(), current_index, rule.clone()) {
         Some(true) => {
             let new_tag = rule.clone().target_tag;
-            sentence[uindex] = (sentence[uindex].0, new_tag);
+            sentence[uindex].1 = new_tag;
             Option::from(true)
         }
         _ => Option::from(false),
@@ -428,10 +428,10 @@ impl fmt::Display for ContextualRulespec {
 #[test]
 fn test_contextual_rule() {
     let mut sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
     ];
 
     let rule: ContextualRulespec = ContextualRulespec {
@@ -445,7 +445,7 @@ fn test_contextual_rule() {
         println!("{} {}", w, c);
     }
 
-    contextual_rule_apply(sentence.as_mut(), 2, rule);
+    contextual_rule_apply(sentence.as_mut(), 2, rule, );
 
     for (w, c) in sentence {
         println!("{} {}", w, c);
@@ -455,10 +455,10 @@ fn test_contextual_rule() {
 #[test]
 fn test_previous_one_or_two_tag_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
     ];
     assert!(previous_one_or_two_tag(sentence.clone(), 3, Wordclass::JJ));
     assert!(previous_one_or_two_tag(sentence.clone(), 4, Wordclass::JJ));
@@ -469,10 +469,10 @@ fn test_previous_one_or_two_tag_found() {
 #[test]
 fn test_previous_one_or_two_tag_not_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
     ];
     assert!(!previous_one_or_two_tag(sentence.clone(), 2, Wordclass::NN));
     assert!(!previous_one_or_two_tag(sentence.clone(), 1, Wordclass::NN));
@@ -483,8 +483,8 @@ fn test_previous_one_or_two_tag_not_found() {
 #[test]
 fn test_previous_one_or_two_tag_out_of_bounds() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
     ];
     assert!(!previous_one_or_two_tag(sentence.clone(), 1, Wordclass::NN));
     assert!(!previous_one_or_two_tag(sentence.clone(), 0, Wordclass::DT));
@@ -495,11 +495,11 @@ fn test_previous_one_or_two_tag_out_of_bounds() {
 #[test]
 fn test_previous_one_or_two_or_three_tag_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("lazy", Wordclass::JJ),
-        ("dog", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("lazy"), Wordclass::JJ),
+        (String::from("dog"), Wordclass::NN),
     ];
     assert!(previous_one_or_two_or_three_tag(sentence.clone(), 4, Wordclass::JJ));
     assert!(previous_one_or_two_or_three_tag(sentence.clone(), 5, Wordclass::JJ));
@@ -510,11 +510,11 @@ fn test_previous_one_or_two_or_three_tag_found() {
 #[test]
 fn test_previous_one_or_two_or_three_tag_not_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("lazy", Wordclass::JJ),
-        ("dog", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("lazy"), Wordclass::JJ),
+        (String::from("dog"), Wordclass::NN),
     ];
     assert!(!previous_one_or_two_or_three_tag(sentence.clone(), 3, Wordclass::NN));
     assert!(!previous_one_or_two_or_three_tag(sentence.clone(), 2, Wordclass::NN));
@@ -525,8 +525,8 @@ fn test_previous_one_or_two_or_three_tag_not_found() {
 #[test]
 fn test_previous_one_or_two_or_three_tag_out_of_bounds() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
     ];
     assert!(!previous_one_or_two_or_three_tag(sentence.clone(), 1, Wordclass::NN));
     assert!(!previous_one_or_two_or_three_tag(sentence.clone(), 0, Wordclass::DT));
@@ -537,11 +537,11 @@ fn test_previous_one_or_two_or_three_tag_out_of_bounds() {
 #[test]
 fn test_next_one_or_two_or_three_tag_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("lazy", Wordclass::JJ),
-        ("dog", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("lazy"), Wordclass::JJ),
+        (String::from("dog"), Wordclass::NN),
     ];
     assert!(next_one_or_two_or_three_tag(sentence.clone(), 1, Wordclass::JJ));
     assert!(next_one_or_two_or_three_tag(sentence.clone(), 0, Wordclass::JJ));
@@ -552,14 +552,14 @@ fn test_next_one_or_two_or_three_tag_found() {
 #[test]
 fn test_next_one_or_two_or_three_tag_not_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("lazy", Wordclass::JJ),
-        ("dog", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("lazy"), Wordclass::JJ),
+        (String::from("dog"), Wordclass::NN),
     ];
-    assert!(!next_one_or_two_or_three_tag(sentence.clone(), 2, Wordclass::NN));
-    assert!(!next_one_or_two_or_three_tag(sentence.clone(), 3, Wordclass::NN));
+    assert!(!next_one_or_two_or_three_tag(sentence.clone(), 2, Wordclass::DT));
+    assert!(!next_one_or_two_or_three_tag(sentence.clone(), 3, Wordclass::DT));
 }
 
 
@@ -567,9 +567,9 @@ fn test_next_one_or_two_or_three_tag_not_found() {
 #[test]
 fn test_next_one_or_two_or_three_tag_out_of_bounds() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
     ];
     assert!(!next_one_or_two_or_three_tag(sentence.clone(), 2, Wordclass::NN));
     assert!(!next_one_or_two_or_three_tag(sentence.clone(), 1, Wordclass::NN));
@@ -580,11 +580,11 @@ fn test_next_one_or_two_or_three_tag_out_of_bounds() {
 #[test]
 fn test_word_and_tag_2_after_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
-        ("jumps", Wordclass::VB),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
+        (String::from("jumps"), Wordclass::VB),
     ];
     assert!(word_and_tag_2_after(sentence.clone(), 0, "The", Wordclass::JJ));
     assert!(word_and_tag_2_after(sentence.clone(), 1, "quick", Wordclass::NN));
@@ -595,11 +595,11 @@ fn test_word_and_tag_2_after_found() {
 #[test]
 fn test_word_and_tag_2_after_not_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
-        ("jumps", Wordclass::VB),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
+        (String::from("jumps"), Wordclass::VB),
     ];
     assert!(!word_and_tag_2_after(sentence.clone(), 0, "The", Wordclass::NN));
     assert!(!word_and_tag_2_after(sentence.clone(), 1, "quick", Wordclass::VB));
@@ -610,9 +610,9 @@ fn test_word_and_tag_2_after_not_found() {
 #[test]
 fn test_word_and_tag_2_after_out_of_bounds() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
     ];
     assert!(!word_and_tag_2_after(sentence.clone(), 2, "brown", Wordclass::NN));
     assert!(!word_and_tag_2_after(sentence.clone(), 1, "quick", Wordclass::NN));
@@ -623,11 +623,11 @@ fn test_word_and_tag_2_after_out_of_bounds() {
 #[test]
 fn test_word_and_2_after_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
-        ("jumps", Wordclass::VB),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
+        (String::from("jumps"), Wordclass::VB),
     ];
     assert!(word_and_2_after(sentence.clone(), 0, "The", "brown"));
     assert!(word_and_2_after(sentence.clone(), 1, "quick", "fox"));
@@ -638,11 +638,11 @@ fn test_word_and_2_after_found() {
 #[test]
 fn test_word_and_2_after_not_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
-        ("jumps", Wordclass::VB),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
+        (String::from("jumps"), Wordclass::VB),
     ];
     assert!(!word_and_2_after(sentence.clone(), 0, "The", "fox"));
     assert!(!word_and_2_after(sentence.clone(), 1, "quick", "jumps"));
@@ -652,9 +652,9 @@ fn test_word_and_2_after_not_found() {
 #[test]
 fn test_word_and_2_after_out_of_bounds() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
     ];
     assert!(!word_and_2_after(sentence.clone(), 1, "quick", "brown"));
     assert!(!word_and_2_after(sentence.clone(), 0, "The", "quick"));
@@ -664,10 +664,10 @@ fn test_word_and_2_after_out_of_bounds() {
 #[test]
 fn test_previous_one_or_two_word_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
     ];
     assert!(previous_one_or_two_word(sentence.clone(), 1, "The"));
     assert!(previous_one_or_two_word(sentence.clone(), 3, "brown"));
@@ -677,10 +677,10 @@ fn test_previous_one_or_two_word_found() {
 #[test]
 fn test_previous_one_or_two_word_not_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("fox", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("fox"), Wordclass::NN),
     ];
     assert!(!previous_one_or_two_word(sentence.clone(), 3, "The"));
     assert!(!previous_one_or_two_word(sentence.clone(), 2, "fox"));
@@ -690,8 +690,9 @@ fn test_previous_one_or_two_word_not_found() {
 #[test]
 fn test_previous_one_or_two_word_out_of_bounds() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
     ];
     assert!(!previous_one_or_two_word(sentence.clone(), 0, "quick"));
 }
@@ -699,11 +700,11 @@ fn test_previous_one_or_two_word_out_of_bounds() {
 #[test]
 fn test_prev_two_tag_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("lazy", Wordclass::JJ),
-        ("dog", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("lazy"), Wordclass::JJ),
+        (String::from("dog"), Wordclass::NN),
     ];
     assert!(prev_two_tag(sentence.clone(), 2, Wordclass::DT));
     assert!(prev_two_tag(sentence.clone(), 3, Wordclass::JJ));
@@ -713,11 +714,11 @@ fn test_prev_two_tag_found() {
 #[test]
 fn test_prev_two_tag_not_found() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
-        ("lazy", Wordclass::JJ),
-        ("dog", Wordclass::NN),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
+        (String::from("lazy"), Wordclass::JJ),
+        (String::from("dog"), Wordclass::NN),
     ];
     assert!(!prev_two_tag(sentence.clone(), 3, Wordclass::NN));
     assert!(!prev_two_tag(sentence.clone(), 2, Wordclass::NN));
@@ -727,9 +728,9 @@ fn test_prev_two_tag_not_found() {
 #[test]
 fn test_prev_two_tag_out_of_bounds() {
     let sentence = vec![
-        ("The", Wordclass::DT),
-        ("quick", Wordclass::JJ),
-        ("brown", Wordclass::JJ),
+        (String::from("The"), Wordclass::DT),
+        (String::from("quick"), Wordclass::JJ),
+        (String::from("brown"), Wordclass::JJ),
     ];
     assert!(!prev_two_tag(sentence.clone(), 0, Wordclass::NN));
     assert!(!prev_two_tag(sentence.clone(), 1, Wordclass::NN));
