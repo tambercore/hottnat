@@ -3,6 +3,7 @@ use crate::rs_wordclass::Wordclass;
 use rs_conllu;
 use crate::rs_brill_tagger::tag_sentence;
 
+/// Function to map a `Wordclass` POS tag to a `rs_conllu::UPOS` POS tag (sacraficing of variety).
 pub fn wordclass_to_upos(wordclass: &Wordclass) -> rs_conllu::UPOS {
     match wordclass {
         Wordclass::CC    => rs_conllu::UPOS::CCONJ,     // Coordinating conjunction
@@ -46,6 +47,7 @@ pub fn wordclass_to_upos(wordclass: &Wordclass) -> rs_conllu::UPOS {
     }
 }
 
+/// Function to benchmark the POS tagger using a `.conllu` file (give the path as a parameter).
 pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
 
     // Open the file and create a buffered reader
@@ -100,7 +102,7 @@ pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
             };
 
             // Print the token, predicted, and actual POS tags, along with a check or cross symbol
-            println!("{:<20} | {:<20} | {:<15} | {:<10?} | {}",
+            println!("{:<20} | {:<20} | {:<15} | {:<10?} | {} |",
                      token.form,                               // Original word
                      original_upos,                            // Original UPOS
                      word,                                     // Predicted word
