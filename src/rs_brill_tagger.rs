@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use itertools::{enumerate, Itertools};
 use crate::rs_contextual_ruleset::parse_contextual_ruleset;
 use crate::rs_contextual_rulespec::{contextual_rule_apply, ContextualRulespec};
 use crate::rs_wordclass::Wordclass;
@@ -33,7 +32,7 @@ pub fn tag_sentence(sentence: &str) -> Vec<(String, Wordclass)> {
 
 /// Apply lexical rules to a sentence `sentence_to_tag`
 fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>, possible_tags: &Vec<(String, Vec<Wordclass>)>, wc_mapping: &WordclassMap) {
-    for (index, (word, _)) in enumerate(sentence_to_tag.clone()) {
+    for (index, (word, _)) in sentence_to_tag.clone().iter().enumerate() {
         for rule in lexical_ruleset {
             if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) {continue;}
             lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping);
@@ -46,7 +45,7 @@ fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_r
 fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possible_tags: &Vec<(String, Vec<Wordclass>)>, contextual_ruleset: &HashMap<Wordclass, Vec<ContextualRulespec>>, threshold:i32) -> Option<bool> {
     let mut iterations = 0;
     loop {
-        for (index, (word, tag)) in enumerate(sentence_to_tag.clone()) {
+        for (index, (word, tag)) in sentence_to_tag.clone().iter().enumerate() {
             let valid_rules = contextual_ruleset.get(&tag);
             match valid_rules {
                 Some(_valid_rules) => {

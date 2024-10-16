@@ -8,6 +8,8 @@ mod rs_lexical_rulespec;
 mod rs_contractions;
 mod rs_benchmark;
 mod rs_brill_tagger;
+mod rs_conllu_parser;
+
 use std::collections::HashMap;
 use std::fs;
 use std::io::{self, Error, Write};
