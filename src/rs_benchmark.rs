@@ -1,7 +1,7 @@
 use crate::rs_wordclass::Wordclass;
 use rs_conllu;
 
-pub fn wordclass_to_upos(wordclass: Wordclass) -> UPOS {
+pub fn wordclass_to_upos(wordclass: Wordclass) -> rs_conllu::UPOS {
     match wordclass {
         Wordclass::CC    => rs_conllu::UPOS::CCONJ,     // Coordinating conjunction
         Wordclass::CD    => rs_conllu::UPOS::NUM,       // Cardinal number
