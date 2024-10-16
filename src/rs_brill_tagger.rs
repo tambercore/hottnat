@@ -12,7 +12,7 @@ use crate::rs_lexical_rulespec::lexical_rule_apply;
 
 
 /// Function to tag a `sentence` using lexical and contextual rules.
-fn tag_sentence(sentence: &str) {
+pub fn tag_sentence(sentence: &str) -> Vec<(String, Wordclass)> {
     // Parse rulesets and lexicon.
     let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
@@ -26,6 +26,8 @@ fn tag_sentence(sentence: &str) {
     // Apply lexical and contextual rules.
     apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping);
     apply_contextual_rules(&mut sentence_to_tag, &words_to_tags, &contextual_ruleset, 100).ok_or("Max iterations reached in contextual rules");
+
+    return sentence_to_tag;
 }
 
 

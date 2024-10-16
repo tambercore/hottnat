@@ -1,7 +1,9 @@
+use std::fs::File;
 use crate::rs_wordclass::Wordclass;
 use rs_conllu;
+use crate::rs_brill_tagger::tag_sentence;
 
-pub fn wordclass_to_upos(wordclass: Wordclass) -> rs_conllu::UPOS {
+pub fn wordclass_to_upos(wordclass: &Wordclass) -> rs_conllu::UPOS {
     match wordclass {
         Wordclass::CC    => rs_conllu::UPOS::CCONJ,     // Coordinating conjunction
         Wordclass::CD    => rs_conllu::UPOS::NUM,       // Cardinal number
@@ -42,4 +44,87 @@ pub fn wordclass_to_upos(wordclass: Wordclass) -> rs_conllu::UPOS {
         Wordclass::OTHER => rs_conllu::UPOS::X,         // Other
         Wordclass::ANY   => rs_conllu::UPOS::X,         // Any (contextual, treated as other)
     }
+}
+
+pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
+
+    // Open the file and create a buffered reader
+    let mut file = File::open(conllu_filepath).unwrap();
+
+    // First pass: Count the total number of sentences
+    let total_sentences = rs_conllu::parse_file(file)  // Clone the reader so it can be used in the second pass
+        .count();  // Count the sentences without consuming them
+
+    // Reopen the file for the second pass to process the sentences
+    let file = File::open(conllu_filepath).unwrap();  // Reopen the file
+    let doc = rs_conllu::parse_file(file);
+
+    let mut total_score = 0.0;  // To track the total score for all sentences
+    let mut sentence_count = 0; // To track the number of sentences
+
+    for (i, sentence) in doc.enumerate() {
+        let sentence = sentence.expect("REASON");  // Unwrap the sentence safely
+
+        // Collect forms into a space-separated string
+        let str_sentence: String = sentence.tokens.iter()   // Use iter() to avoid moving ownership
+            .map(|token| token.form.as_str())               // Map each token to its form
+            .collect::<Vec<&str>>()                         // Collect into a Vec<&str>
+            .join(" ");                                     // Join the words into a single string
+
+        // Tag the sentence using the tagging function
+        let tagged_sentence = tag_sentence(&str_sentence);
+
+        // Print sentence number and header
+        println!("\nSentence {} score:", i + 1);
+        println!("{:<20} | {:<20} | {:<15} | {:<10} | {}", "Original Word", "Original UPOS", "Predicted Word", "Predicted Tag", "Match");
+        println!("{}", "-".repeat(80));
+
+        // Variables to calculate match score for this sentence
+        let mut matches = 0;
+        let total_tokens = sentence.tokens.len();
+
+        // Zip the original tokens with the tagged tokens to print them side by side
+        for (token, (word, tag)) in sentence.tokens.iter().zip(tagged_sentence.iter()) {
+            let predicted_upos = wordclass_to_upos(tag);  // Convert predicted Wordclass to UPOS
+
+            // Compare the predicted UPOS with the actual UPOS
+            let correct = token.upos == Some(predicted_upos);  // Check if they match
+            if correct {
+                matches += 1;
+            }
+
+            // Format the token's actual UPOS for display
+            let original_upos = match token.upos {
+                Some(upos) => format!("{:?}", upos),
+                None => "None".to_string(),
+            };
+
+            // Print the token, predicted, and actual POS tags, along with a check or cross symbol
+            println!("{:<20} | {:<20} | {:<15} | {:<10?} | {}",
+                     token.form,                               // Original word
+                     original_upos,                            // Original UPOS
+                     word,                                     // Predicted word
+                     predicted_upos,                           // Predicted UPOS
+                     if correct { "✔" } else { "✘" });         // Match indicator
+        }
+
+        // Calculate the match score for this sentence
+        let sentence_score = matches as f32 / total_tokens as f32;
+        total_score += sentence_score;
+        sentence_count += 1;
+
+        // Print the match score for the sentence
+        println!("\nSentence {} (of {}) match score: {:.2}\n", i, total_sentences, sentence_score);
+        println!("{}", "=".repeat(80));  // Separate output for readability
+    }
+
+    // Calculate and return the average match score across all sentences
+    let avg_score = if sentence_count > 0 {
+        total_score / sentence_count as f32
+    } else {
+        0.0
+    };
+
+    println!("Average match score: {:.2}", avg_score);
+    avg_score
 }

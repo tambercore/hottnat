@@ -10,12 +10,11 @@ mod rs_benchmark;
 mod rs_brill_tagger;
 use std::collections::HashMap;
 use std::fs;
-use std::fs::File;
 use std::io::{self, Error, Write};
 use rs_wordclass::*;
 use rs_contextual_rulespec::*;
 use rs_contextual_ruleset::*;
-use rs_conllu::{parse_sentence, TokenID};
+use rs_benchmark::benchmark_pos_tagger;
 
 type WordclassMap = HashMap<String, Vec<Wordclass>>;
 
@@ -63,14 +62,7 @@ fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
 
 fn main() -> io::Result<()> {
 
-    let file = File::open("data/en_ewt-ud-test.conllu").unwrap();
-    let doc = rs_conllu::parse_file(file);
-
-    for sentence in doc {
-        for token in sentence.unwrap() {
-            println!("{}, {:?}", token.form, token.upos);
-        }
-    }
+    benchmark_pos_tagger("data/en_ewt-ud-test.conllu");
 
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
     let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
