@@ -44,10 +44,8 @@ fn find_contractions(input: String) -> Result<Vec<String>, String> {
                 let mut output = input.clone();
                 if let Some(first_char) = output.chars().next() {
                     if first_char.is_uppercase() {
-                        let capitalized_char = first_char.to_uppercase().collect::<String>();
-
                         // Access the first element of result mutably using indexing, not `get()`
-                        result[0].replace_range(0..first_char.len_utf8(), &capitalized_char);
+                        result[0].replace_range(0..first_char.len_utf8(), &first_char.to_string().as_str());
                     }
                 } else { return Err(String::from("Input is an empty string.")); }
             }
