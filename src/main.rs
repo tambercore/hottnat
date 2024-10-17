@@ -17,6 +17,8 @@ use rs_wordclass::*;
 use rs_contextual_rulespec::*;
 use rs_contextual_ruleset::*;
 use rs_benchmark::benchmark_pos_tagger;
+use crate::rs_lex_rulespec_id::LexicalRulespec;
+use crate::rs_lexical_ruleset::parse_lexical_ruleset;
 
 type WordclassMap = HashMap<String, Vec<Wordclass>>;
 
@@ -64,10 +66,17 @@ fn format_vec(wordclasses: &Vec<Wordclass>) -> String {
 
 fn main() -> io::Result<()> {
 
-    benchmark_pos_tagger("data/en_ewt-ud-test.conllu");
 
+    // Parse rulesets and lexicon.
+    let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt")?;
-    let tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
+    let mut tagger: WordclassMap = initialize_tagger("data/lexicon.txt")?;
+
+
+    benchmark_pos_tagger("data/en_ewt-ud-test.conllu", &lexical_ruleset, &contextual_ruleset, &mut tagger);
+
+    /*
+
 
     loop {
         print!("Enter a word: ");
@@ -103,7 +112,7 @@ fn main() -> io::Result<()> {
                 println!("Word not found in the lexicon.");
             }
         }
-    }
+    }*/
 
     Ok(())
 }

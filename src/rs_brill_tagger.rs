@@ -11,17 +11,13 @@ use crate::rs_lexical_rulespec::lexical_rule_apply;
 
 
 /// Function to tag a `sentence` using lexical and contextual rules.
-pub fn tag_sentence(sentence: &str) -> Vec<(String, Wordclass)> {
-    // Parse rulesets and lexicon.
-    let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
-    let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
-    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+pub fn tag_sentence(sentence: &str, lexical_ruleset: &Vec<LexicalRulespec>, contextual_ruleset: &HashMap<Wordclass, Vec<ContextualRulespec>>, wc_mapping: &mut WordclassMap) -> Vec<(String, Wordclass)> {
 
     // Tokenise sentence, and map each word to its possible tags.
     let tokenised_sentence = tokenize_sentence(sentence);
-    let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, &mut wc_mapping);
+    let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, wc_mapping);
 
-    println!("possible tags: {:?}", words_to_tags);
+    //println!("possible tags: {:?}", words_to_tags);
     let mut sentence_to_tag: Vec<(String, Wordclass)> = retrieve_sentence_to_tag(words_to_tags.clone());
 
     // Apply lexical and contextual rules.
@@ -121,5 +117,10 @@ fn are_tags_valid(sentence: &Vec<(String, Wordclass)>, possible_tags: &Vec<(Stri
 #[test]
 fn test_tag_sentence() {
     // To do proper tests, need to know what the sentences should be tagged as!
-    tag_sentence("The actual vote is a little confusing");
+    // Parse rulesets and lexicon.
+    let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
+    let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
+    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+
+    tag_sentence("The actual vote is a little confusing", &lexical_ruleset, &contextual_ruleset, &mut wc_mapping);
 }

@@ -1,7 +1,11 @@
+use std::collections::HashMap;
 //use std::fs::File;
 use crate::rs_wordclass::Wordclass;
 use crate::rs_conllu_parser::parse_conllu_file; // Import your custom parser
 use crate::rs_brill_tagger::tag_sentence;
+use crate::rs_contextual_rulespec::ContextualRulespec;
+use crate::rs_lex_rulespec_id::LexicalRulespec;
+use crate::WordclassMap;
 
 /// Function to map a `Wordclass` POS tag to a `rs_conllu::UPOS` POS tag (sacrificing variety).
 pub fn wordclass_to_upos(wordclass: &Wordclass) -> crate::rs_conllu_parser::UPOS {
@@ -48,7 +52,7 @@ pub fn wordclass_to_upos(wordclass: &Wordclass) -> crate::rs_conllu_parser::UPOS
 }
 
 /// Function to benchmark the POS tagger using a `.conllu` file (give the path as a parameter).
-pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
+pub fn benchmark_pos_tagger(conllu_filepath: &str, lexical_ruleset: &Vec<LexicalRulespec>, contextual_ruleset: &HashMap<Wordclass, Vec<ContextualRulespec>>, wc_mapping: &mut WordclassMap) -> f32 {
     // Open the file and create a buffered reader
     // let file = File::open(conllu_filepath).expect("Unable to open file");
 
@@ -72,7 +76,7 @@ pub fn benchmark_pos_tagger(conllu_filepath: &str) -> f32 {
             .join(" ");                               // Join the words into a single string
 
         // Tag the sentence using the tagging function
-        let tagged_sentence = tag_sentence(&str_sentence);
+        let tagged_sentence = tag_sentence(&str_sentence, &lexical_ruleset, &contextual_ruleset, wc_mapping);
 
         // Print sentence number and header
         println!("\nSentence {} score:", i + 1);
