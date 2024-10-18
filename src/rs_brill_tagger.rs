@@ -21,21 +21,36 @@ pub fn tag_sentence(sentence: &str, lexical_ruleset: &Vec<LexicalRulespec>, cont
     let mut sentence_to_tag: Vec<(String, Wordclass)> = retrieve_sentence_to_tag(words_to_tags.clone());
 
     // Apply lexical and contextual rules.
-    apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping);
+    apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping, 1);
     apply_contextual_rules(&mut sentence_to_tag, &words_to_tags, &contextual_ruleset, 100).ok_or("Max iterations reached in contextual rules");
+
 
     return sentence_to_tag;
 }
 
 
 /// Apply lexical rules to a sentence `sentence_to_tag`
-fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>, possible_tags: &Vec<(String, Vec<Wordclass>)>, wc_mapping: &WordclassMap) {
-    for (index, (word, _)) in sentence_to_tag.clone().iter().enumerate() {
-        for rule in lexical_ruleset {
-            if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) {continue;}
-            lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping);
+fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>, possible_tags: &Vec<(String, Vec<Wordclass>)>, wc_mapping: &WordclassMap, max_iterations: i32) {
+
+    let mut iterations = 0;
+    loop {
+        let mut rules_applied = 0;
+        for (index, (word, _)) in sentence_to_tag.clone().iter().enumerate() {
+            for rule in lexical_ruleset {
+                if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) { continue; }
+                match lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping){
+                    Some(true) => {
+                        println!("lexical rule applied");
+                        rules_applied += 1},
+                    _ => {},
+                }
+            }
         }
+        //if are_tags_valid(&sentence_to_tag, &possible_tags) {return Some(true)}
+        if iterations == max_iterations || rules_applied == 0 {return}
+        iterations +=1;
     }
+
 }
 
 
@@ -43,21 +58,27 @@ fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_r
 fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possible_tags: &Vec<(String, Vec<Wordclass>)>, contextual_ruleset: &HashMap<Wordclass, Vec<ContextualRulespec>>, threshold:i32) -> Option<bool> {
     let mut iterations = 0;
     loop {
+        let mut rules_applied = 0;
         for (index, (word, tag)) in sentence_to_tag.clone().iter().enumerate() {
             let valid_rules = contextual_ruleset.get(&tag);
             match valid_rules {
                 Some(_valid_rules) => {
                     for rule in _valid_rules {
                         if !is_tag_contained_in_word_possible_tags(possible_tags, &word, &rule.target_tag) {continue;}
-                        contextual_rule_apply(sentence_to_tag, index as i32, rule.clone());
+                        match contextual_rule_apply(sentence_to_tag, index as i32, rule.clone()) {
+                            Some(true) => {
+                                println!("rule applied");
+                                rules_applied += 1},
+                            _ => {},
+                        }
                     }
                 }
                 // Some Wordclasses have no associated rules (e.g. CC) - in this case, the tag is kept.
                 None => continue
             }
         }
-        if are_tags_valid(&sentence_to_tag, &possible_tags) {return Some(true)}
-        if iterations == threshold {return None;}
+        //if are_tags_valid(&sentence_to_tag, &possible_tags) {return Some(true)}
+        if iterations == threshold || rules_applied == 0 {return Some(true)}
         iterations +=1;
     }
 
