@@ -1,6 +1,27 @@
 use std::fmt;
-use std::io::{Error, ErrorKind};
 
+
+/*
+pub enum UPOS {
+    ADJ,      // Adjective
+    ADP,      // Adposition
+    ADV,      // Adverb
+    AUX,      // Auxiliary
+    CCONJ,    // Coordinating conjunction
+    DET,      // Determiner
+    INTJ,     // Interjection
+    NOUN,     // Noun
+    NUM,      // Numeral
+    PART,     // Particle
+    PRON,     // Pronoun
+    PROPN,    // Proper noun
+    PUNCT,    // Punctuation
+    SCONJ,    // Subordinating conjunction
+    SYM,      // Symbol
+    VERB,     // Verb
+    X,        // Other
+}
+ */
 #[derive(Debug, Clone, Hash, Eq, PartialEq)]
 pub enum Wordclass {
     CC,     // Coordinating conjunction
@@ -39,7 +60,7 @@ pub enum Wordclass {
     WPR,    // Wh-pronoun
     WPO,    // Possessive wh-pronoun
     WRB,    // Wh-adverb
-    OTHER,  // Other!
+    PUNC,   // Punctuation
     ANY,    // Any, used in contextual rules.
 }
 
@@ -82,55 +103,58 @@ impl fmt::Display for Wordclass {
             Wordclass::WPR => "Wh-pronoun",
             Wordclass::WPO => "Possessive wh-pronoun",
             Wordclass::WRB => "Wh-adverb",
-            Wordclass::OTHER => "Other!",
+            Wordclass::PUNC => "Punctuation",
             Wordclass::ANY => "Any!",
+
         };
         write!(f, "{}", wordclass_str)
     }
 }
 
-
-pub fn map_pos_tag(tag: &str) -> Result<Wordclass, Error> {
+/// Function to map strings representing POS tags to their enum representation.
+pub fn map_pos_tag(tag: &str) -> Option<Wordclass> {
     match tag {
-        "CC" => Ok(Wordclass::CC),
-        "CD" => Ok(Wordclass::CD),
-        "DT" => Ok(Wordclass::DT),
-        "EX" => Ok(Wordclass::EX),
-        "FW" => Ok(Wordclass::FW),
-        "IN" => Ok(Wordclass::IN),
-        "JJ" => Ok(Wordclass::JJ),
-        "JJR" => Ok(Wordclass::JJR),
-        "JJS" => Ok(Wordclass::JJS),
-        "LS" => Ok(Wordclass::LS),
-        "MD" => Ok(Wordclass::MD),
-        "NN" => Ok(Wordclass::NN),
-        "NNS" => Ok(Wordclass::NNS),
-        "NNP" => Ok(Wordclass::NNP),
-        "NNPS" => Ok(Wordclass::NNPS),
-        "PDT" => Ok(Wordclass::PDT),
-        "POS" => Ok(Wordclass::POS),
-        "PRP" => Ok(Wordclass::PRPE),
-        "PRP$" => Ok(Wordclass::PRPO),
-        "RB" => Ok(Wordclass::RB),
-        "RBR" => Ok(Wordclass::RBR),
-        "RBS" => Ok(Wordclass::RBS),
-        "RP" => Ok(Wordclass::RP),
-        "SYM" => Ok(Wordclass::SYM),
-        "TO" => Ok(Wordclass::TO),
-        "UH" => Ok(Wordclass::UH),
-        "VB" => Ok(Wordclass::VB),
-        "VBD" => Ok(Wordclass::VBD),
-        "VBG" => Ok(Wordclass::VBG),
-        "VBN" => Ok(Wordclass::VBN),
-        "VBP" => Ok(Wordclass::VBP),
-        "VBZ" => Ok(Wordclass::VBZ),
-        "WDT" => Ok(Wordclass::WDT),
-        "WP" => Ok(Wordclass::WPR),
-        "WP$" => Ok(Wordclass::WPO),
-        "WRB" => Ok(Wordclass::WRB),
-        ":" => Ok(Wordclass::ANY),
-        "''" => Ok(Wordclass::ANY),
-        tag if tag.contains("|") => Ok(Wordclass::ANY),
-        _ => Err(Error::new(ErrorKind::InvalidData, format!("Invalid POS Tag Identifier: {}", tag))),
+        "CC" => Some(Wordclass::CC),
+        "CD" => Some(Wordclass::CD),
+        "DT" => Some(Wordclass::DT),
+        "EX" => Some(Wordclass::EX),
+        "FW" => Some(Wordclass::FW),
+        "IN" => Some(Wordclass::IN),
+        "JJ" => Some(Wordclass::JJ),
+        "JJR" => Some(Wordclass::JJR),
+        "JJS" => Some(Wordclass::JJS),
+        "LS" => Some(Wordclass::LS),
+        "MD" => Some(Wordclass::MD),
+        "NN" => Some(Wordclass::NN),
+        "NNS" => Some(Wordclass::NNS),
+        "NNP" => Some(Wordclass::NNP),
+        "NNPS" => Some(Wordclass::NNPS),
+        "PDT" => Some(Wordclass::PDT),
+        "POS" => Some(Wordclass::POS),
+        "PRP" => Some(Wordclass::PRPE),
+        "PRP$" => Some(Wordclass::PRPO),
+        "RB" => Some(Wordclass::RB),
+        "RBR" => Some(Wordclass::RBR),
+        "RBS" => Some(Wordclass::RBS),
+        "RP" => Some(Wordclass::RP),
+        "SYM" => Some(Wordclass::SYM),
+        "TO" => Some(Wordclass::TO),
+        "UH" => Some(Wordclass::UH),
+        "VB" => Some(Wordclass::VB),
+        "VBD" => Some(Wordclass::VBD),
+        "VBG" => Some(Wordclass::VBG),
+        "VBN" => Some(Wordclass::VBN),
+        "VBP" => Some(Wordclass::VBP),
+        "VBZ" => Some(Wordclass::VBZ),
+        "WDT" => Some(Wordclass::WDT),
+        "WP" => Some(Wordclass::WPR),
+        "WP$" => Some(Wordclass::WPO),
+        "WRB" => Some(Wordclass::WRB),
+        "." => Some(Wordclass::PUNC),
+        "," => Some(Wordclass::PUNC),
+        "!" => Some(Wordclass::PUNC),
+        ";" => Some(Wordclass::PUNC),
+        tag if tag.contains("|") => Some(Wordclass::ANY),
+        _ => None,
     }
 }

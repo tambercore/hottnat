@@ -41,7 +41,7 @@ pub fn find_contractions(input: String) -> Result<Vec<String>, String> {
                     .map(|s| s.to_string())  // Convert each &str to String
                     .collect();                                          // Collect the results into a Vec<String>
 
-                let mut output = input.clone();
+                let output = input.clone();
                 if let Some(first_char) = output.chars().next() {
                     if first_char.is_uppercase() {
                         // Access the first element of result mutably using indexing, not `get()`

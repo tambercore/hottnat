@@ -5,7 +5,6 @@ use crate::rs_rulespec_id::*;
 use crate::rs_contextual_rulespec::*;
 use std::collections::HashMap;
 
-
 /// ...
 pub fn parse_contextual_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<ContextualRulespec>>, Error>
 {
@@ -21,18 +20,27 @@ pub fn parse_contextual_ruleset(path: &str) -> Result<HashMap<Wordclass, Vec<Con
         let rulestring: &str = parts.get(2).ok_or_else(|| Error::new(ErrorKind::InvalidData, "Missing ruleset ID"))?;
 
         // Since `source` and `target` should map to POS tags, the rulespec ID should also map.
-        let source_tag: Wordclass = map_pos_tag(source)?;
-        let target_tag: Wordclass = map_pos_tag(target)?;
-        let ruleset_id: RulespecID = map_rulespec_id(rulestring)?;
+        let source_tag: Option<Wordclass> = map_pos_tag(source);
+        let target_tag: Option<Wordclass> = map_pos_tag(target);
 
-        // Finally, any additional parameters are collected, before the structure is added to the vector.
-        let parameters: Vec<String> = parts.iter().skip(3).map(|s| s.to_string()).collect();
-        let new_rulespec = ContextualRulespec {
-            source_tag: source_tag.clone(), target_tag, ruleset_id, parameters,
-        };
+        match (source_tag, target_tag) {
+            (Some(s), Some(t)) => {
+                let ruleset_id: RulespecID = map_rulespec_id(rulestring)?;
 
-        // Append the rule specification into the vector mapping of the source tag, meaning this rule applies to the source tag.
-        result.entry(source_tag).or_default().push(new_rulespec);
+                // Finally, any additional parameters are collected, before the structure is added to the vector.
+                let parameters: Vec<String> = parts.iter().skip(3).map(|s| s.to_string()).collect();
+                let new_rulespec = ContextualRulespec {
+                    source_tag: s.clone(),
+                    target_tag: t,
+                    ruleset_id, parameters,
+                };
+
+                // Append the rule specification into the vector mapping of the source tag, meaning this rule applies to the source tag.
+                result.entry(s).or_default().push(new_rulespec.clone());
+            }
+            _ => {
+            }
+        }
     }
     Ok(result)
 }

@@ -1,7 +1,6 @@
 use crate::rs_wordclass::{map_pos_tag, Wordclass};
 use crate::{initialize_tagger, WordclassMap};
 use crate::rs_lex_rulespec_id::{LexicalRuleID, LexicalRulespec};
-use itertools::Itertools;
 
 /// Function to check if the word at `current_index` has suffix `suffix` and is not yet tagged.
 pub fn has_suffix(sentence: &Vec<(String, Wordclass)>, current_index: i32, suffix: &str) -> bool {
@@ -227,8 +226,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(has_suffix(&sentence, current_index, suffix)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(has_suffix(&sentence, current_index, suffix)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -239,8 +238,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_has_char(&sentence, current_index, c.parse().unwrap(), _wordclass)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_has_char(&sentence, current_index, c.parse().unwrap(), _wordclass)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -251,8 +250,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(add_suffix(&sentence, current_index, suffix, wc_mapping)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(add_suffix(&sentence, current_index, suffix, wc_mapping)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -263,8 +262,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_appears_to_right(&sentence, current_index, expected_word, _wordclass)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_appears_to_right(&sentence, current_index, expected_word, _wordclass)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -275,8 +274,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(delete_prefix(&sentence, current_index, prefix, wc_mapping)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(delete_prefix(&sentence, current_index, prefix, wc_mapping)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -287,8 +286,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_appears_to_left(&sentence, current_index, expected_word, _wordclass)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_appears_to_left(&sentence, current_index, expected_word, _wordclass)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -299,8 +298,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(appears_to_left(&sentence, current_index, expected_word)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(appears_to_left(&sentence, current_index, expected_word)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -311,8 +310,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(appears_to_right(&sentence, current_index, expected_word)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(appears_to_right(&sentence, current_index, expected_word)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -323,8 +322,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_delete_suffix(&sentence, current_index, suffix, _wordclass, wc_mapping)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_delete_suffix(&sentence, current_index, suffix, _wordclass, wc_mapping)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -335,8 +334,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(has_char(&sentence, current_index, c.parse().unwrap())) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(has_char(&sentence, current_index, c.parse().unwrap())) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -347,8 +346,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_delete_prefix(&sentence, current_index, prefix, _wordclass, wc_mapping)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_delete_prefix(&sentence, current_index, prefix, _wordclass, wc_mapping)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -359,8 +358,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_add_suffix(&sentence, current_index, suffix, _wordclass, wc_mapping)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_add_suffix(&sentence, current_index, suffix, _wordclass, wc_mapping)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -371,8 +370,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_has_suffix(&sentence, current_index, suffix, _wordclass)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_has_suffix(&sentence, current_index, suffix, _wordclass)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -383,8 +382,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(f_has_prefix(&sentence, current_index, suffix, _wordclass)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(f_has_prefix(&sentence, current_index, suffix, _wordclass)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -395,8 +394,8 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
             let source_tag_wc = map_pos_tag(source_tag);
 
             match source_tag_wc {
-                Ok(_wordclass) => { Option::from(delete_suffix(&sentence, current_index, suffix, wc_mapping)) }
-                Err(_) => {
+                Some(_wordclass) => { Option::from(delete_suffix(&sentence, current_index, suffix, wc_mapping)) }
+                None => {
                     Option::from(false)
                 }
             }
@@ -424,7 +423,7 @@ pub fn lexical_rule_apply(sentence: &mut Vec<(String, Wordclass)>, current_index
 
 #[test]
 fn test_lexical_rule_apply() {
-    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+    let wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
 
     let mut sentence = vec![

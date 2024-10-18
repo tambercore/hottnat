@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use itertools::{enumerate, Itertools};
 use crate::rs_contextual_ruleset::parse_contextual_ruleset;
 use crate::rs_contextual_rulespec::{contextual_rule_apply, ContextualRulespec};
 use crate::rs_wordclass::Wordclass;
@@ -12,31 +11,46 @@ use crate::rs_lexical_rulespec::lexical_rule_apply;
 
 
 /// Function to tag a `sentence` using lexical and contextual rules.
-fn tag_sentence(sentence: &str) {
-    // Parse rulesets and lexicon.
-    let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
-    let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
-    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+pub fn tag_sentence(sentence: &str, lexical_ruleset: &Vec<LexicalRulespec>, contextual_ruleset: &HashMap<Wordclass, Vec<ContextualRulespec>>, wc_mapping: &mut WordclassMap) -> Vec<(String, Wordclass)> {
 
     // Tokenise sentence, and map each word to its possible tags.
     let tokenised_sentence = tokenize_sentence(sentence);
-    let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, &mut wc_mapping);
+    let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, wc_mapping);
+
+    //println!("possible tags: {:?}", words_to_tags);
     let mut sentence_to_tag: Vec<(String, Wordclass)> = retrieve_sentence_to_tag(words_to_tags.clone());
 
     // Apply lexical and contextual rules.
-    apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping);
+    apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping, 1);
     apply_contextual_rules(&mut sentence_to_tag, &words_to_tags, &contextual_ruleset, 100).ok_or("Max iterations reached in contextual rules");
+
+
+    return sentence_to_tag;
 }
 
 
 /// Apply lexical rules to a sentence `sentence_to_tag`
-fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>, possible_tags: &Vec<(String, Vec<Wordclass>)>, wc_mapping: &WordclassMap) {
-    for (index, (word, _)) in enumerate(sentence_to_tag.clone()) {
-        for rule in lexical_ruleset {
-            if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) {continue;}
-            lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping);
+fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_ruleset: &Vec<LexicalRulespec>, possible_tags: &Vec<(String, Vec<Wordclass>)>, wc_mapping: &WordclassMap, max_iterations: i32) {
+
+    let mut iterations = 0;
+    loop {
+        let mut rules_applied = 0;
+        for (index, (word, _)) in sentence_to_tag.clone().iter().enumerate() {
+            for rule in lexical_ruleset {
+                if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) { continue; }
+                match lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping){
+                    Some(true) => {
+                        println!("lexical rule applied");
+                        rules_applied += 1},
+                    _ => {},
+                }
+            }
         }
+        //if are_tags_valid(&sentence_to_tag, &possible_tags) {return Some(true)}
+        if iterations == max_iterations || rules_applied == 0 {return}
+        iterations +=1;
     }
+
 }
 
 
@@ -44,21 +58,27 @@ fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_r
 fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possible_tags: &Vec<(String, Vec<Wordclass>)>, contextual_ruleset: &HashMap<Wordclass, Vec<ContextualRulespec>>, threshold:i32) -> Option<bool> {
     let mut iterations = 0;
     loop {
-        for (index, (word, tag)) in enumerate(sentence_to_tag.clone()) {
+        let mut rules_applied = 0;
+        for (index, (word, tag)) in sentence_to_tag.clone().iter().enumerate() {
             let valid_rules = contextual_ruleset.get(&tag);
             match valid_rules {
                 Some(_valid_rules) => {
                     for rule in _valid_rules {
                         if !is_tag_contained_in_word_possible_tags(possible_tags, &word, &rule.target_tag) {continue;}
-                        contextual_rule_apply(sentence_to_tag, index as i32, rule.clone());
+                        match contextual_rule_apply(sentence_to_tag, index as i32, rule.clone()) {
+                            Some(true) => {
+                                println!("rule applied");
+                                rules_applied += 1},
+                            _ => {},
+                        }
                     }
                 }
                 // Some Wordclasses have no associated rules (e.g. CC) - in this case, the tag is kept.
                 None => continue
             }
         }
-        if are_tags_valid(&sentence_to_tag, &possible_tags) {return Some(true)}
-        if iterations == threshold {return None;}
+        //if are_tags_valid(&sentence_to_tag, &possible_tags) {return Some(true)}
+        if iterations == threshold || rules_applied == 0 {return Some(true)}
         iterations +=1;
     }
 
@@ -118,5 +138,10 @@ fn are_tags_valid(sentence: &Vec<(String, Wordclass)>, possible_tags: &Vec<(Stri
 #[test]
 fn test_tag_sentence() {
     // To do proper tests, need to know what the sentences should be tagged as!
-    tag_sentence("i want to rock and roll every night");
+    // Parse rulesets and lexicon.
+    let lexical_ruleset: Vec<LexicalRulespec> = parse_lexical_ruleset("data/rulefile_lexical.txt").unwrap();
+    let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
+    let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
+
+    tag_sentence("The actual vote is a little confusing", &lexical_ruleset, &contextual_ruleset, &mut wc_mapping);
 }
