@@ -218,6 +218,8 @@ pub fn is_word_in_lexicon(word: String, wc_mapping: &WordclassMap) -> bool {
 /// Checks a given lexical rule.
 pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index: i32, rule: &LexicalRulespec, wc_mapping: &WordclassMap) -> Option<bool> {
 
+
+
     match rule.ruleset_id {
         LexicalRuleID::HASSUF => {
 
@@ -408,6 +410,15 @@ pub fn lexical_rule_holds(sentence: &mut Vec<(String, Wordclass)>, current_index
 pub fn lexical_rule_apply(sentence: &mut Vec<(String, Wordclass)>, current_index: i32, rule: &LexicalRulespec, wc_mapping: &WordclassMap) -> Option<bool> {
 
     let uindex: usize = current_index as usize;
+
+    //println!("{:?}", sentence);
+
+    /// If a word is numeric, it is type WORDCLASS::NUM
+    if sentence.get(uindex)?.0.parse::<i64>().is_ok() || sentence.get(current_index as usize)?.0.parse::<f64>().is_ok() {
+        //println!("yes");
+        sentence[uindex].1 = Wordclass::NUM;
+        Option::from(true);
+    }
 
     // Run Lexical Rule
     match lexical_rule_holds(sentence, current_index, rule, &wc_mapping) {
