@@ -21,8 +21,10 @@ pub fn tag_sentence(sentence: &str, lexical_ruleset: &Vec<LexicalRulespec>, cont
     let mut sentence_to_tag: Vec<(String, Wordclass)> = retrieve_sentence_to_tag(words_to_tags.clone());
 
     // Apply lexical and contextual rules.
-    apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping, 1);
+    apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping, 10);
     apply_contextual_rules(&mut sentence_to_tag, &words_to_tags, &contextual_ruleset, 100).ok_or("Max iterations reached in contextual rules");
+
+    println!("{:?}", sentence_to_tag);
 
 
     return sentence_to_tag;
@@ -40,7 +42,7 @@ fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_r
                 if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) { continue; }
                 match lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping){
                     Some(true) => {
-                        println!("lexical rule applied");
+                        //println!("lexical rule applied");
                         rules_applied += 1},
                     _ => {},
                 }
@@ -67,7 +69,7 @@ fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possib
                         if !is_tag_contained_in_word_possible_tags(possible_tags, &word, &rule.target_tag) {continue;}
                         match contextual_rule_apply(sentence_to_tag, index as i32, rule.clone()) {
                             Some(true) => {
-                                println!("rule applied");
+                                //println!("rule applied");
                                 rules_applied += 1},
                             _ => {},
                         }
@@ -143,5 +145,5 @@ fn test_tag_sentence() {
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
     let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
-    tag_sentence("The actual vote is a little confusing", &lexical_ruleset, &contextual_ruleset, &mut wc_mapping);
+    tag_sentence("I sdkfhjs him.", &lexical_ruleset, &contextual_ruleset, &mut wc_mapping);
 }
