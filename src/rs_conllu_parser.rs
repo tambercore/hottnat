@@ -57,6 +57,12 @@ pub fn parse_conllu_file(filepath: &str) -> Result<Vec<Vec<Token>>, io::Error> {
 
         // Split the line by tabs (CoNLL-U format)
         let fields: Vec<&str> = line.split('\t').collect();
+
+        // Skip lines with a multi-word token ID, indicated by a range like '17-18'
+        if fields[0].contains('-') {
+            continue; // Skip MWT lines
+        }
+
         if fields.len() >= 10 { // Ensure there are enough fields
             let id = fields[0].to_string();
             let form = fields[1].to_string();

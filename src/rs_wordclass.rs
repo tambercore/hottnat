@@ -154,6 +154,9 @@ pub fn map_pos_tag(tag: &str) -> Option<Wordclass> {
         "," => Some(Wordclass::PUNC),
         "!" => Some(Wordclass::PUNC),
         ";" => Some(Wordclass::PUNC),
+        "(" => Some(Wordclass::PUNC),
+        ")" => Some(Wordclass::PUNC),
+        "-" => Some(Wordclass::PUNC),
         tag if tag.contains("|") => Some(Wordclass::ANY),
         _ => None,
     }
