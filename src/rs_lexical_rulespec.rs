@@ -1,5 +1,5 @@
 use crate::rs_wordclass::{map_pos_tag, Wordclass};
-use crate::{initialize_tagger, WordclassMap};
+use crate::{WordclassMap};
 use crate::rs_lex_rulespec_id::{LexicalRuleID, LexicalRulespec};
 
 /// Function to check if the word at `current_index` has suffix `suffix` and is not yet tagged.
