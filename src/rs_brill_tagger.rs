@@ -17,7 +17,7 @@ pub fn tag_sentence(sentence: &str, lexical_ruleset: &Vec<LexicalRulespec>, cont
     let tokenised_sentence = tokenize_sentence(sentence);
     let words_to_tags: Vec<(String, Vec<Wordclass>)> = get_possible_tags(tokenised_sentence, wc_mapping);
 
-    //println!("{:?}", words_to_tags);
+    println!("{:?}", words_to_tags);
 
     //println!("possible tags: {:?}", words_to_tags);
     let mut sentence_to_tag: Vec<(String, Wordclass)> = retrieve_sentence_to_tag(words_to_tags.clone());
@@ -25,8 +25,6 @@ pub fn tag_sentence(sentence: &str, lexical_ruleset: &Vec<LexicalRulespec>, cont
     // Apply lexical and contextual rules.
     apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping, 10);
     apply_contextual_rules(&mut sentence_to_tag, &words_to_tags, &contextual_ruleset, 100).ok_or("Max iterations reached in contextual rules");
-    //apply_lexical_rules(&mut sentence_to_tag, &lexical_ruleset, &words_to_tags, &wc_mapping, 10);
-    //apply_contextual_rules(&mut sentence_to_tag, &words_to_tags, &contextual_ruleset, 100).ok_or("Max iterations reached in contextual rules");
 
 
     println!("{:?}", sentence_to_tag);
@@ -42,13 +40,13 @@ fn apply_lexical_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, lexical_r
     let mut iterations = 0;
     loop {
         let mut rules_applied = 0;
-        for (index, (word, _)) in sentence_to_tag.clone().iter().enumerate() {
+        for (index, (word, tag)) in sentence_to_tag.clone().iter().enumerate() {
             for rule in lexical_ruleset {
 
-                //if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) { continue; }
+                if !is_tag_contained_in_word_possible_tags(&possible_tags, &word, &rule.target_tag) { continue; }
                 match lexical_rule_apply(sentence_to_tag, index as i32, rule, wc_mapping){
                     Some(true) => {
-                        //println!("lexical rule applied");
+                        println!("LEXICAL {:?} tagged {:?} -> tag {:?}: ",word, tag, &rule.target_tag);
                         rules_applied += 1},
                     _ => {},
                 }
@@ -75,7 +73,7 @@ fn apply_contextual_rules(sentence_to_tag: &mut Vec<(String, Wordclass)>, possib
                         if !is_tag_contained_in_word_possible_tags(possible_tags, &word, &rule.target_tag) {continue;}
                         match contextual_rule_apply(sentence_to_tag, index as i32, rule.clone()) {
                             Some(true) => {
-                                //println!("rule applied");
+                                println!("CONTEXTUAL {:?} tagged {:?} -> tag {:?}: ",word, tag, &rule.target_tag);
                                 rules_applied += 1},
                             _ => {},
                         }
@@ -124,7 +122,7 @@ fn is_tag_contained_in_word_possible_tags(possible_tags: &Vec<(String, Vec<Wordc
         .find(|(first, _)| first == word)
         .map(|(_, second)| second).unwrap();
 
-    possible_tags_for_word.contains(target_tag)
+    possible_tags_for_word.contains(target_tag) || possible_tags_for_word.contains(&Wordclass::ANY)
 }
 
 
@@ -151,5 +149,5 @@ fn test_tag_sentence() {
     let contextual_ruleset: HashMap<Wordclass, Vec<ContextualRulespec>> = parse_contextual_ruleset("data/rulefile_contextual.txt").unwrap();
     let mut wc_mapping: WordclassMap = initialize_tagger("data/lexicon.txt").unwrap();
 
-    tag_sentence("1.1 hello 2.234 3 4 5 6 7 8 9 10 11 12 13 14 15", &lexical_ruleset, &contextual_ruleset, &mut wc_mapping);
+    tag_sentence("i am SDKHFING away", &lexical_ruleset, &contextual_ruleset, &mut wc_mapping);
 }
