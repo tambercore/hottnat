@@ -12,51 +12,50 @@ use crate::rs_contextual_rulespec::ContextualRulespec;
 use crate::rs_lex_rulespec_id::LexicalRulespec;
 use crate::WordclassMap;
 
-/// Function to map a `Wordclass` POS tag to a `rs_conllu::UPOS` POS tag (sacrificing variety).
+
 pub fn wordclass_to_upos(wordclass: &Wordclass) -> crate::rs_conllu_parser::UPOS {
     match wordclass {
-        Wordclass::CC    => crate::rs_conllu_parser::UPOS::CCONJ,
-        Wordclass::CD    => crate::rs_conllu_parser::UPOS::NUM,
-        Wordclass::DT    => crate::rs_conllu_parser::UPOS::DET,
-        Wordclass::FW    => crate::rs_conllu_parser::UPOS::X,
-        Wordclass::IN    => crate::rs_conllu_parser::UPOS::ADP,
-        Wordclass::JJ    => crate::rs_conllu_parser::UPOS::ADJ,
-        Wordclass::JJR   => crate::rs_conllu_parser::UPOS::ADJ,
-        Wordclass::JJS   => crate::rs_conllu_parser::UPOS::ADJ,
-        Wordclass::LS    => crate::rs_conllu_parser::UPOS::X,
-        Wordclass::MD    => crate::rs_conllu_parser::UPOS::AUX,
-        Wordclass::NN    => crate::rs_conllu_parser::UPOS::NOUN,
-        Wordclass::NNS   => crate::rs_conllu_parser::UPOS::NOUN,
-        Wordclass::NNP   => crate::rs_conllu_parser::UPOS::PROPN,
-        Wordclass::NNPS  => crate::rs_conllu_parser::UPOS::PROPN,
-        Wordclass::PDT   => crate::rs_conllu_parser::UPOS::DET,
-        Wordclass::POS   => crate::rs_conllu_parser::UPOS::PART,
-        Wordclass::RB    => crate::rs_conllu_parser::UPOS::ADV,
-        Wordclass::RBR   => crate::rs_conllu_parser::UPOS::ADV,
-        Wordclass::RBS   => crate::rs_conllu_parser::UPOS::ADV,
-        Wordclass::RP    => crate::rs_conllu_parser::UPOS::PART,
-        Wordclass::SYM   => crate::rs_conllu_parser::UPOS::SYM,
-        Wordclass::TO    => crate::rs_conllu_parser::UPOS::SCONJ,
-        Wordclass::UH    => crate::rs_conllu_parser::UPOS::INTJ,
-        Wordclass::VB    => crate::rs_conllu_parser::UPOS::VERB,
-        Wordclass::VBD   => crate::rs_conllu_parser::UPOS::VERB,
-        Wordclass::VBG   => crate::rs_conllu_parser::UPOS::VERB,
-        Wordclass::VBN   => crate::rs_conllu_parser::UPOS::VERB,
-        Wordclass::WDT   => crate::rs_conllu_parser::UPOS::PRON,
-        Wordclass::WPR   => crate::rs_conllu_parser::UPOS::PRON,
-        Wordclass::WPO   => crate::rs_conllu_parser::UPOS::PRON,
-        Wordclass::WRB   => crate::rs_conllu_parser::UPOS::ADV,
-        Wordclass::PUNC => crate::rs_conllu_parser::UPOS::PUNCT,
-        Wordclass::EX    => crate::rs_conllu_parser::UPOS::ADV,  // Existential "there"
-        Wordclass::PRPO  => crate::rs_conllu_parser::UPOS::DET,  // Possessive pronoun
-        Wordclass::PRPE  => crate::rs_conllu_parser::UPOS::PRON, // Personal pronoun
-        Wordclass::VBP   => crate::rs_conllu_parser::UPOS::AUX, // Present-tense verb
-        Wordclass::VBZ   => crate::rs_conllu_parser::UPOS::AUX, // 3rd-person singular verb
-        Wordclass::NUM => crate::rs_conllu_parser::UPOS::NUM,
-        Wordclass::ANY   => crate::rs_conllu_parser::UPOS::PROPN,
+        Wordclass::CC    => crate::rs_conllu_parser::UPOS::CCONJ, // Coordinating conjunction
+        Wordclass::CD    => crate::rs_conllu_parser::UPOS::NUM,   // Cardinal number
+        Wordclass::DT    => crate::rs_conllu_parser::UPOS::DET,   // Determiner
+        Wordclass::FW    => crate::rs_conllu_parser::UPOS::X,     // Foreign word
+        Wordclass::IN    => crate::rs_conllu_parser::UPOS::SCONJORADP,   // Preposition or subordinating conjunction
+        Wordclass::JJ    => crate::rs_conllu_parser::UPOS::ADJ,   // Adjective
+        Wordclass::JJR   => crate::rs_conllu_parser::UPOS::ADJ,   // Comparative adjective
+        Wordclass::JJS   => crate::rs_conllu_parser::UPOS::ADJ,   // Superlative adjective
+        Wordclass::LS    => crate::rs_conllu_parser::UPOS::X,     // List marker
+        Wordclass::MD    => crate::rs_conllu_parser::UPOS::VERB,   // Modal verb
+        Wordclass::NN    => crate::rs_conllu_parser::UPOS::NOUN,  // Noun
+        Wordclass::NNS   => crate::rs_conllu_parser::UPOS::NOUN,  // Plural noun
+        Wordclass::NNP   => crate::rs_conllu_parser::UPOS::PROPN,  // Proper noun
+        Wordclass::NNPS  => crate::rs_conllu_parser::UPOS::PROPN,  // Plural proper noun
+        Wordclass::PDT   => crate::rs_conllu_parser::UPOS::DET,   // Predeterminer
+        Wordclass::POS   => crate::rs_conllu_parser::UPOS::PART,  // Possessive ending
+        Wordclass::RB    => crate::rs_conllu_parser::UPOS::ADV,   // Adverb
+        Wordclass::RBR   => crate::rs_conllu_parser::UPOS::ADV,   // Comparative adverb
+        Wordclass::RBS   => crate::rs_conllu_parser::UPOS::ADV,   // Superlative adverb
+        Wordclass::RP    => crate::rs_conllu_parser::UPOS::PART,  // Particle
+        Wordclass::SYM   => crate::rs_conllu_parser::UPOS::SYM,   // Symbol
+        Wordclass::TO    => crate::rs_conllu_parser::UPOS::PART,  // Infinitive marker (to)
+        Wordclass::UH    => crate::rs_conllu_parser::UPOS::INTJ,  // Interjection
+        Wordclass::VB    => crate::rs_conllu_parser::UPOS::VERB,   // Verb
+        Wordclass::VBD   => crate::rs_conllu_parser::UPOS::VERB,   // Past tense verb
+        Wordclass::VBG   => crate::rs_conllu_parser::UPOS::VERB,   // Gerund/Present participle
+        Wordclass::VBN   => crate::rs_conllu_parser::UPOS::VERB,   // Past participle
+        Wordclass::WDT   => crate::rs_conllu_parser::UPOS::PRON,   // Wh-determiner
+        Wordclass::WPR   => crate::rs_conllu_parser::UPOS::PRON,   // Wh-pronoun
+        Wordclass::WPO   => crate::rs_conllu_parser::UPOS::PRON,   // Wh-other pronoun
+        Wordclass::WRB   => crate::rs_conllu_parser::UPOS::ADV,    // Wh-adverb
+        Wordclass::PUNC  => crate::rs_conllu_parser::UPOS::PUNCT,  // Punctuation
+        Wordclass::EX    => crate::rs_conllu_parser::UPOS::ADV,    // Existential "there"
+        Wordclass::PRPO  => crate::rs_conllu_parser::UPOS::PRON,   // Possessive pronoun
+        Wordclass::PRPE  => crate::rs_conllu_parser::UPOS::PRON,   // Personal pronoun
+        Wordclass::VBP   => crate::rs_conllu_parser::UPOS::VERB,    // Present tense verb
+        Wordclass::VBZ   => crate::rs_conllu_parser::UPOS::VERB,    // 3rd-person singular verb
+        Wordclass::NUM   => crate::rs_conllu_parser::UPOS::NUM,    // Numeral
+        Wordclass::ANY   => crate::rs_conllu_parser::UPOS::PROPN,   // Ambiguous, may need clarification in usage
     }
 }
-
 
 #[derive(Serialize)]  // Enable CSV serialization for the struct
 struct BenchmarkData {

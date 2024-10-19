@@ -7,7 +7,11 @@ pub enum UPOS {
     ADJ,      // Adjective
     ADP,      // Adposition
     ADV,      // Adverb
-    AUX,      // Auxiliary
+
+    // In the Penn Treebank tag set, verbs are split across several tags (VB, VBD, VBP, VBZ, etc.)
+    // which do not translate to the UPOS tag set (treat AUX as VERB)
+    //AUX,      // Auxiliary
+
     CCONJ,    // Coordinating conjunction
     DET,      // Determiner
     INTJ,     // Interjection
@@ -21,6 +25,13 @@ pub enum UPOS {
     SYM,      // Symbol
     VERB,     // Verb
     X,        // Other
+
+    // the tag for IN (which includes both prepositions and subordinating conjunctions) may
+    // cause issues if the model does not accurately differentiate between these two usages.
+    // This could lead to mistags where SCONJ is being mapped to ADP incorrectly.
+    SCONJORADP,
+
+
 }
 
 /// Struct representing a token parsed from a CoNLL-U file.
@@ -69,9 +80,9 @@ pub fn parse_conllu_file(filepath: &str) -> Result<Vec<Vec<Token>>, io::Error> {
             let lemma = fields[2].to_string();
             let upos = match fields[3] {
                 "ADJ" => Some(UPOS::ADJ),
-                "ADP" => Some(UPOS::ADP),
+                "ADP" => Some(UPOS::SCONJORADP),
                 "ADV" => Some(UPOS::ADV),
-                "AUX" => Some(UPOS::AUX),
+                "AUX" => Some(UPOS::VERB),
                 "CCONJ" => Some(UPOS::CCONJ),
                 "DET" => Some(UPOS::DET),
                 "INTJ" => Some(UPOS::INTJ),
@@ -81,7 +92,7 @@ pub fn parse_conllu_file(filepath: &str) -> Result<Vec<Vec<Token>>, io::Error> {
                 "PRON" => Some(UPOS::PRON),
                 "PROPN" => Some(UPOS::PROPN),
                 "PUNCT" => Some(UPOS::PUNCT),
-                "SCONJ" => Some(UPOS::SCONJ),
+                "SCONJ" => Some(UPOS::SCONJORADP),
                 "SYM" => Some(UPOS::SYM),
                 "VERB" => Some(UPOS::VERB),
                 _ => None, // Handle any other cases
